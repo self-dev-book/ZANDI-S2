@@ -3,26 +3,34 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import { StyleSheet, Image, ImageBackground } from 'react-native'
 
-import styles from '../styles/style';
+// import styles from '../styles/style';
 
 
-let image = StyleSheet.create({
+let styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
+    width: null,
+    height: null,
     resizeMode: 'cover', // or 'stretch'
-  }
+  },
+  text: {
+    textAlign: 'center',
+    color: 'white',
+    backgroundColor: 'rgba(0,0,0,0)',
+    fontSize: 32
+}
 });
 
 
 
 export default () => {
   return (
-    <View style={[styles.row, styles.header]}>
+    // <View style={[styles.row, styles.header]}>
       <Image source={require('../assets/splash.png')} 
-      style= {image.backgroundImage}
+        style= {styles.backgroundImage}
       />
-      {/* <ImageBackground source={{uri: imageURL}} style={styles.bgImage} /> */}
-      <StatusBar style="auto" />
-    </View>
-  );
+      /*{ <ImageBackground source={{uri: imageURL}} style={styles.bgImage} /> }*/
+      // <StatusBar style="auto" />
+    // </View>
+   );
 };
