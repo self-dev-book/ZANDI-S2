@@ -8,7 +8,7 @@ export const loadGitHubToken = () => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       // return the token
-      resolve(null);
+      resolve("abcde");
     }, 1000);
   });
 };
