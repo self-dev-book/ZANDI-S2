@@ -20,6 +20,7 @@
     "react-native-reanimated": "^1.13.0",
     "react-native-safe-area-context": "^3.1.6",
     "react-native-screens": "^2.10.1",
+    "react-native-settings-page": "2.0.6",
     "react-native-web": "~0.11.7"
   },
   "devDependencies": {
