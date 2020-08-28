@@ -24,10 +24,14 @@ class Settings extends React.Component {
 	render() {
 		return (
 			<ReactNativeSettingsPage>
-				<SectionRow text='Usage'>
+				<SectionRow text=''>
 					<NavigateRow
-						text='Navigate Row'
-						iconName='your-icon-name'
+						text='알람 설정'
+						iconName='bell'
+						onPressCallback={this._navigateToScreen} />
+						<NavigateRow
+						text='로그아웃'
+						iconName='user-times'
 						onPressCallback={this._navigateToScreen} />
 				</SectionRow>
 			</ReactNativeSettingsPage>
