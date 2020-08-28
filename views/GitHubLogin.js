@@ -14,7 +14,7 @@ export const loadGitHubToken = () => {
     setTimeout(() => {
       // return the token
       resolve(null);
-    }, 2000);
+    }, 1500);
   });
 };
 
