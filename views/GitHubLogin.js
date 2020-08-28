@@ -13,6 +13,10 @@ export const loadGitHubToken = () => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       // return the token
+<<<<<<< HEAD
+      resolve("abcde");
+    }, 1000);
+=======
       resolve(null);
     }, 2000);
   });
@@ -53,6 +57,7 @@ const getRandomState = (setGitHubState) => {
   .catch(err => {
     setGitHubState(null);
     console.log(err);
+>>>>>>> origin/master
   });
 };
 
