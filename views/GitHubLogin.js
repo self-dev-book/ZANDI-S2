@@ -13,7 +13,7 @@ export const loadGitHubToken = () => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       // return the token
-      resolve(null);
+      resolve("test access token");
     }, 1500);
   });
 };
