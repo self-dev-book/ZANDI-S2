@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { NavigationContainer } from '@react-navigation/native';
@@ -17,7 +17,7 @@ export default () => {
 
   // state
   const [isLoaded, setIsLoaded] = useState(false);
-  const [gitHubToken, setGitHubToken] = useState(null);
+  const [gitHubToken, setGitHubToken] = useState(undefined);
 
   // load app
   const loadApp = () => {
@@ -27,7 +27,12 @@ export default () => {
       setIsLoaded(true);
     });
   };
-  loadApp();
+
+  useEffect(() => {
+    if (gitHubToken === undefined) {
+      loadApp();
+    }
+  });
 
   return (
     isLoaded ? // 삼항연산자
@@ -40,7 +45,9 @@ export default () => {
           </>
         ) : (
           <>
-            <Stack.Screen name="GitHubLogin" component={GitHubLogin} />
+            <Stack.Screen name="GitHubLogin">
+              {props => <GitHubLogin {...props} setGitHubToken={setGitHubToken} />}
+            </Stack.Screen>
           </>
         )
         }
