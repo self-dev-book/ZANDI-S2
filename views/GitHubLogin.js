@@ -47,12 +47,17 @@ export const deleteGitHubToken = async () => {
   }
 };
 
-const requestGitHubToken = (state, setGitHubState, setGitHubToken, setGitHubTokenRequested) => {
+const requestGitHubToken = async (state, setGitHubState, setGitHubToken, setGitHubTokenRequested) => {
   console.log(`requestGitHubToken(${state})`);
-  axios.get(`${keys.GitHubLoginMiddlewareURL_Token}?state=${state}`)
-  .then(response => {
-    let result = response.data.result;
-    let message = response.data.message;
+
+  // request an access token
+  try {
+    let {
+      data: {
+        result,
+        message
+      }
+    } = await axios.get(`${keys.GitHubLoginMiddlewareURL_Token}?state=${state}`);
 
     if (result == 1) {
       // success
@@ -62,28 +67,32 @@ const requestGitHubToken = (state, setGitHubState, setGitHubToken, setGitHubToke
       // fail
       console.log(message);
     }
-  })
-  .catch(err => {
-    console.log(err);
+  } catch (error) {
+    console.log(error);
     setGitHubState(null);
-  })
-  .then(() => {
-    setGitHubTokenRequested(false);
-  });
+  }
+
+  setGitHubTokenRequested(false);
 };
 
-const getRandomState = (setGitHubState) => {
+const getRandomState = async (setGitHubState) => {
   console.log(`getRandomState()`);
-  axios.get(keys.GitHubLoginMiddlewareURL_State)
-  .then(response => {
-    let state = response.data.message;
-    setGitHubState(state);
-    console.log(state);
-  })
-  .catch(err => {
+
+  // request a random state
+  try {
+    let {
+      data: {
+        message
+      }
+    } = await axios.get(keys.GitHubLoginMiddlewareURL_State);
+
+    // message is the state
+    setGitHubState(message);
+    console.log(message);
+  } catch (error) {
     setGitHubState(null);
-    console.log(err);
-  });
+    console.log(error);
+  }
 };
 
 export default (props) => {
