@@ -2,20 +2,49 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
 import { WebView } from 'react-native-webview';
 import { Button, Text, View } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 
 import styles from '../styles/style';
 
 import keys from '../keys.json';
 
-export const loadGitHubToken = () => {
+const StorageGitHubTokenName = 'GitHubToken';
+
+export const loadGitHubToken = async () => {
   console.log(`loadGitHubToken()`);
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      // return the token
-      resolve("test access token");
-    }, 1500);
-  });
+  try {
+    // return the token (or null)
+    let token = await AsyncStorage.getItem(StorageGitHubTokenName);
+    console.log(`${token} loaded`);
+    return token;
+  } catch (error) {
+    // fail to load a token
+    console.log(error);
+    return null;
+  }
+};
+
+const storeGitHubToken = async (token) => {
+  console.log(`storeGitHubToken()`);
+  try {
+    // store the token
+    await AsyncStorage.setItem(StorageGitHubTokenName, token);
+  } catch (error) {
+    // fail to store the token
+    console.log(error);
+  }
+};
+
+export const deleteGitHubToken = async () => {
+  console.log(`deleteGitHubToken()`);
+  try {
+    // delete token
+    await AsyncStorage.removeItem(StorageGitHubTokenName);
+  } catch (error) {
+    // fail to delete a token
+    console.log(error);
+  }
 };
 
 const requestGitHubToken = (state, setGitHubState, setGitHubToken, setGitHubTokenRequested) => {
@@ -27,6 +56,7 @@ const requestGitHubToken = (state, setGitHubState, setGitHubToken, setGitHubToke
 
     if (result == 1) {
       // success
+      storeGitHubToken(message);
       setGitHubToken(message);
     } else {
       // fail
@@ -39,7 +69,7 @@ const requestGitHubToken = (state, setGitHubState, setGitHubToken, setGitHubToke
   })
   .then(() => {
     setGitHubTokenRequested(false);
-  })
+  });
 };
 
 const getRandomState = (setGitHubState) => {
@@ -78,6 +108,7 @@ export default (props) => {
   });
 
   if (gitHubToken) {
+    // token exist
     return (
       <View style={styles.container}>
         <Text>Your access token is {gitHubToken}. Please wait.</Text>
