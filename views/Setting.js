@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Button, Text, View } from 'react-native';
+import { StyleSheet, Button, Image, Text, View } from 'react-native';
 import ReactNativeSettingsPage, { 
 	SectionRow, 
 	NavigateRow,
@@ -31,11 +31,16 @@ class Settings extends React.Component {
 			<ReactNativeSettingsPage>
 				<SectionRow text="github account" >
 					<View style={styles_p.profile_box}>
-					<View style={styles_p.profile_txt}><Text fontSize='50'>img</Text></View>
-					<View style={styles_p.text_box}>
-						<Text style={styles_p.name}>{this.account.name}</Text>
-						<Text style={styles_p.mail}>{this.account.email}</Text>
-					</View>
+						<View style={styles_p.profile_txt}>
+							<Image
+								style={styles.tinyLogo}
+								source={{uri:"https://avatars3.githubusercontent.com/u/43772472?s=60&v=4",}}
+							/>
+						</View>
+						<View style={styles_p.text_box}>
+							<Text style={styles_p.name}>{this.account.name}</Text>
+							<Text style={styles_p.mail}>{this.account.email}</Text>
+						</View>
 					</View>
 				</SectionRow>
 				<SectionRow >
@@ -72,7 +77,8 @@ let styles_p = StyleSheet.create({
 	mail:{
 		textAlign: 'center',
 		fontSize: 15,
-		color: 'grey'
+		color: 'grey',
+		margin: 15
 	},
 	profile_txt:{
 		flex:1,
