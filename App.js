@@ -35,7 +35,7 @@ export default () => {
   });
 
   return (
-    isLoaded ?
+    isLoaded ? // 삼항연산자
     <NavigationContainer>
       <Stack.Navigator>
         {gitHubToken ? (

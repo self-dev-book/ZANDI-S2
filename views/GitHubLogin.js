@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 
 import styles from '../styles/style';
+import { getUserInfo } from '../util/GitHubAPI';
 
 import keys from '../keys.json';
 
@@ -17,6 +18,10 @@ export const loadGitHubToken = async () => {
     // return the token (or null)
     let token = await AsyncStorage.getItem(StorageGitHubTokenName);
     console.log(`${token} loaded`);
+
+    // for test
+    if (token) getUserInfo(token);
+
     return token;
   } catch (error) {
     // fail to load a token
