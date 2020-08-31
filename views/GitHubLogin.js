@@ -120,7 +120,7 @@ export default (props) => {
     // token exist
     return (
       <View style={styles.container}>
-        <Text>Your access token is {gitHubToken}. Please wait.</Text>
+        <Text>Access token acquired. Please wait.</Text>
         <StatusBar style="auto" />
       </View>
     );
