@@ -6,6 +6,7 @@ import ReactNativeSettingsPage, {
 	NavigateRow,
 	CheckRow
 } from 'react-native-settings-page';
+import {deleteGitHubToken } from './GitHubLogin.js';
 
 import styles from '../styles/style';
 
@@ -25,6 +26,9 @@ class Settings extends React.Component {
 	_navigateToScreen = () => {
 		const { navigation } = this.props
 		navigation.navigate('Your-Screen-Name');
+	}
+	logout=()=>{
+		deleteGitHubToken();
 	}
 	render() {
 		return (
@@ -48,10 +52,10 @@ class Settings extends React.Component {
 						text='알람 설정'
 						iconName='bell'
 						onPressCallback={this._navigateToScreen} />
-						<NavigateRow
+					<NavigateRow
 						text='로그아웃'
 						iconName='user-times'
-						onPressCallback={this._navigateToScreen} />
+						onPressCallback={this.logout} />
 				</SectionRow>
 			</ReactNativeSettingsPage>
 		)
