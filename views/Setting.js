@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { Button, Text, View } from 'react-native';
+import { StyleSheet, Button, Text, View } from 'react-native';
 import ReactNativeSettingsPage, { 
 	SectionRow, 
 	NavigateRow,
@@ -17,6 +17,11 @@ class Settings extends React.Component {
 		switch: false,
 		value: 40
 	}
+
+	account={
+		name: "gyuZzang",
+		email: "tndnd0606@gmail.com"
+	}
 	_navigateToScreen = () => {
 		const { navigation } = this.props
 		navigation.navigate('Your-Screen-Name');
@@ -24,7 +29,16 @@ class Settings extends React.Component {
 	render() {
 		return (
 			<ReactNativeSettingsPage>
-				<SectionRow text=''>
+				<SectionRow text="github account" >
+					<View style={styles_p.profile_box}>
+					<View style={styles_p.profile_txt}><Text fontSize='50'>img</Text></View>
+					<View style={styles_p.text_box}>
+						<Text style={styles_p.name}>{this.account.name}</Text>
+						<Text style={styles_p.mail}>{this.account.email}</Text>
+					</View>
+					</View>
+				</SectionRow>
+				<SectionRow >
 					<NavigateRow
 						text='알람 설정'
 						iconName='bell'
@@ -38,6 +52,36 @@ class Settings extends React.Component {
 		)
 	}
 }
+
+let styles_p = StyleSheet.create({
+	profile_box: {
+		flex:1,
+		flexDirection:"row"
+	  //width: null,
+	  //height: null,
+	  //resizeMode: 'cover', // or 'stretch'
+	},
+	text_box:{
+		padding:3,
+		flex:4
+	},
+	name: {
+	  textAlign: 'center',
+	  fontSize: 24
+	},
+	mail:{
+		textAlign: 'center',
+		fontSize: 15,
+		color: 'grey'
+	},
+	profile_txt:{
+		flex:1,
+		textAlignVertical:'center',
+		textAlign:'center'
+	}  
+
+  });
+  
 
 export default Settings
 
