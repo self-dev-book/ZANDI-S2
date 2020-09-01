@@ -6,48 +6,43 @@ import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 
 import styles from '../styles/style';
-import { getUserInfo } from '../util/GitHubAPI';
 
 import keys from '../keys.json';
 
 const StorageGitHubTokenName = 'GitHubToken';
 
 export const loadGitHubToken = async () => {
-  console.log(`loadGitHubToken()`);
+  let token = null;
+
+  // return the token (or null)
   try {
-    // return the token (or null)
-    let token = await AsyncStorage.getItem(StorageGitHubTokenName);
-    console.log(`${token} loaded`);
-
-    // for test
-    if (token) getUserInfo(token);
-
-    return token;
+    token = await AsyncStorage.getItem(StorageGitHubTokenName);
   } catch (error) {
-    // fail to load a token
     console.log(error);
-    return null;
   }
+
+  console.log(`loadGitHubToken(): ${token}`);
+  return token;
 };
 
 const storeGitHubToken = async (token) => {
   console.log(`storeGitHubToken()`);
+
+  // store the token
   try {
-    // store the token
     await AsyncStorage.setItem(StorageGitHubTokenName, token);
   } catch (error) {
-    // fail to store the token
     console.log(error);
   }
 };
 
 export const deleteGitHubToken = async () => {
   console.log(`deleteGitHubToken()`);
+
+  // delete the token
   try {
-    // delete token
     await AsyncStorage.removeItem(StorageGitHubTokenName);
   } catch (error) {
-    // fail to delete a token
     console.log(error);
   }
 };
@@ -68,6 +63,7 @@ const requestGitHubToken = async (state, setGitHubState, setGitHubToken, setGitH
       // success
       storeGitHubToken(message);
       setGitHubToken(message);
+      return;
     } else {
       // fail
       console.log(message);
@@ -82,6 +78,7 @@ const requestGitHubToken = async (state, setGitHubState, setGitHubToken, setGitH
 
 const getRandomState = async (setGitHubState) => {
   console.log(`getRandomState()`);
+  let state = null;
 
   // request a random state
   try {
@@ -92,44 +89,34 @@ const getRandomState = async (setGitHubState) => {
     } = await axios.get(keys.GitHubLoginMiddlewareURL_State);
 
     // message is the state
-    setGitHubState(message);
-    console.log(message);
+    state = message;
   } catch (error) {
-    setGitHubState(null);
     console.log(error);
   }
+
+  // set token
+  setGitHubState(state);
 };
 
 export default (props) => {
   // state
   const [gitHubState, setGitHubState] = useState(undefined);
-  const [gitHubToken, setGitHubToken] = useState(null);
   const [gitHubTokenRequested, setGitHubTokenRequested] = useState(false);
 
   useEffect(() => {
     if (!gitHubState) {
       getRandomState(setGitHubState);
-    } else if (!gitHubToken) {
+    } else {
       if (gitHubTokenRequested === false) {
         setGitHubTokenRequested(true);
         setTimeout(() => {
-          requestGitHubToken(gitHubState, setGitHubState, setGitHubToken, setGitHubTokenRequested);
+          requestGitHubToken(gitHubState, setGitHubState, props.setGitHubToken, setGitHubTokenRequested);
         }, 500);
       }
-    } else {
-      props.setGitHubToken(gitHubToken);
     }
   });
 
-  if (gitHubToken) {
-    // token exist
-    return (
-      <View style={styles.container}>
-        <Text>Access token acquired. Please wait.</Text>
-        <StatusBar style="auto" />
-      </View>
-    );
-  } else if (gitHubState) {
+  if (gitHubState) {
     // state exist
     return (
       <WebView
@@ -153,7 +140,7 @@ export default (props) => {
     // state not loaded
     return (
       <View style={styles.container}>
-        <Text>Please wait.</Text>
+        <Text>Please wait...</Text>
         <StatusBar style="auto" />
       </View>
     );
