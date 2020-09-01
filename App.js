@@ -11,6 +11,10 @@ import Loading from './views/Loading';
 import Main from './views/Main';
 import Setting from './views/Setting';
 
+import GitHubAPI from './util/GitHubAPI';
+import { getUserInfo } from '../util/GitHubAPI';
+import { getUserActivity } from '../util/GitHubAPI';
+
 const Stack = createStackNavigator();
 
 export default () => {
@@ -24,15 +28,41 @@ export default () => {
     loadGitHubToken()
     .then(token => {
       setGitHubToken(token);
+      if (token != null) {
+        loadUserInfo(token)
+        loadUserActivity(token)
+      }
       setIsLoaded(true);
     });
   };
+
+  // 사용자 정보 저장하기
+  const loadUserInfo = (token) => {    
+      getUserInfo(token)
+      .then(userInfo => {
+        const userName = userInfo.name 
+        // ...
+      })
+    
+  }
+
+  // 사용자 활동 정보 저장하기
+  const loadUserActivity = (token) => {
+      getUserActivity(token)
+      .then(actInfo => {
+        const userActivityList = actInfo // 몰게써 흑흐긓ㄱ  
+        // ...
+      })
+    
+  }
 
   useEffect(() => {
     if (gitHubToken === undefined) {
       loadApp();
     }
   });
+
+  // 
 
   return (
     isLoaded ? // 삼항연산자
