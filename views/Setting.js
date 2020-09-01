@@ -23,10 +23,12 @@ class Settings extends React.Component {
 		name: "gyuZzang",
 		email: "tndnd0606@gmail.com"
 	}
+	
 	_navigateToScreen = () => {
 		const { navigation } = this.props
-		navigation.navigate('Your-Screen-Name');
+		navigation.navigate('Alarm');
 	}
+	
 	logout=()=>{
 		deleteGitHubToken();
 	}
@@ -51,7 +53,7 @@ class Settings extends React.Component {
 					<NavigateRow
 						text='알람 설정'
 						iconName='bell'
-						onPressCallback={this._navigateToScreen} />
+						onPressCallback={this._navigateToScreen} />				
 					<NavigateRow
 						text='로그아웃'
 						iconName='user-times'
