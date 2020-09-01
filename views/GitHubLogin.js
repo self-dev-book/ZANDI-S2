@@ -105,14 +105,14 @@ export default (props) => {
 
   useEffect(() => {
     if (!gitHubState) {
+      // state not exist
       getRandomState(setGitHubState);
-    } else {
-      if (gitHubTokenRequested === false) {
-        setGitHubTokenRequested(true);
-        setTimeout(() => {
-          requestGitHubToken(gitHubState, setGitHubState, props.setGitHubToken, setGitHubTokenRequested);
-        }, 500);
-      }
+    } else if (gitHubTokenRequested === false) {
+      // able to request a token
+      setGitHubTokenRequested(true);
+      setTimeout(() => {
+        requestGitHubToken(gitHubState, setGitHubState, props.setGitHubToken, setGitHubTokenRequested);
+      }, 500);
     }
   });
 
