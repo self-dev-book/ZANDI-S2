@@ -1,27 +1,31 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Button, Image, Text, View } from 'react-native';
+import { StyleSheet, Button, Image, Text, View, Alert } from 'react-native';
 import ReactNativeSettingsPage, { 
 	SectionRow, 
 	NavigateRow,
 	CheckRow
 } from 'react-native-settings-page';
-import {deleteGitHubToken } from './GitHubLogin.js';
 
+import  {loadGitHubToken, deleteGitHubToken } from './GitHubLogin.js';
+
+import {getUserInfo} from '../util/GitHubAPI.js'
 import styles from '../styles/style';
 
 
 class Settings extends React.Component {
-	// TODO: implement your navigationOptions
 	state = {
 		check: false,
 		switch: false,
 		value: 40
 	}
+	//account = getUserInfo(loadGitHubToken)
+	//스트링 형태가 아니라서 안된대 왜지?
 
 	account={
 		name: "gyuZzang",
-		email: "tndnd0606@gmail.com"
+		email: "tndnd0606@gmail.com",
+		avatar: 'https://avatars3.githubusercontent.com/u/43772472?s=60&v=4'
 	}
 	
 	_navigateToScreen = () => {
@@ -29,18 +33,21 @@ class Settings extends React.Component {
 		navigation.navigate('Alarm');
 	}
 	
-	logout=()=>{
-		deleteGitHubToken();
-	}
 	render() {
 		return (
 			<ReactNativeSettingsPage>
 				<SectionRow text="github account" >
 					<View style={styles_p.profile_box}>
-						<View style={styles_p.profile_txt}>
+						<View style={styles_p.profile_img}>
 							<Image
-								style={styles.tinyLogo}
-								source={{uri:"https://avatars3.githubusercontent.com/u/43772472?s=60&v=4",}}
+								style={{
+								padding: 10,
+								width: 75,
+								height: 75,
+								borderRadius: 90
+								}}
+								resizeMode='cover'
+								source={{uri:this.account.avatar}}
 							/>
 						</View>
 						<View style={styles_p.text_box}>
@@ -57,7 +64,9 @@ class Settings extends React.Component {
 					<NavigateRow
 						text='로그아웃'
 						iconName='user-times'
-						onPressCallback={this.logout} />
+						onPressCallback={()=> Alert.alert('logout','로그아웃하시겠습니까?',[
+							{text: 'OK', onPressCallback:()=>deleteGitHubToken()},
+						])} />
 				</SectionRow>
 			</ReactNativeSettingsPage>
 		)
@@ -86,10 +95,11 @@ let styles_p = StyleSheet.create({
 		color: 'grey',
 		margin: 15
 	},
-	profile_txt:{
+	profile_img:{
 		flex:1,
-		textAlignVertical:'center',
-		textAlign:'center'
+		margin:10,
+		marginLeft:40,
+		alignItems:'center'
 	}  
 
   });
