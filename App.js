@@ -10,6 +10,7 @@ import GitHubLogin, { loadGitHubToken } from './views/GitHubLogin';
 import Loading from './views/Loading';
 import Main from './views/Main';
 import Setting from './views/Setting';
+import Alarm from './views/Alarm';
 
 const Stack = createStackNavigator();
 
@@ -42,6 +43,10 @@ export default () => {
           <>
             <Stack.Screen name="Main" component={Main} />
             <Stack.Screen name="Setting" component={Setting} />
+            <Stack.Screen 
+              name="Alarm" 
+              component={Alarm}
+              options={{title:'알람 설정'}} />
           </>
         ) : (
           <>
