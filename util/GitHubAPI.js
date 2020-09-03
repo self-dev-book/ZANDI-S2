@@ -1,5 +1,4 @@
 import { Octokit } from "@octokit/core";
-import GitHubLogin from '../views/GitHubLogin'
 
 export const getUserInfo = async (token) => {
   const octokit = new Octokit({ auth: token });
