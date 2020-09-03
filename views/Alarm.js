@@ -46,7 +46,7 @@ const period = [
 class Alarm extends React.Component {
     state = {
         check: false,
-        switch_alarm: true,
+        switch_alarm: false,
         switch_sound: false,
         switch_vibe: false,
         switch_push: false,
@@ -67,12 +67,15 @@ class Alarm extends React.Component {
                     _onValueChange={() => {
                         this.setState({
                             switch_alarm: !this.state.switch_alarm,
+                            switch_sound: !this.state.switch_alarm,
+                            switch_vibe: !this.state.switch_alarm,
+                            switch_push: !this.state.switch_alarm
                         })
-                    }} />
+                    }} 
+                />
                 {this.state.switch_alarm ?
                     (
                         <>
-                      
                             <SectionRow>
                                 <SwitchRow
                                     text='소리'
@@ -110,8 +113,8 @@ class Alarm extends React.Component {
                         </>
                     ) :
                     (
-                        <>
-                        </>
+                        <></>
+                    
                     )}
 
             </ReactNativeSettingsPage>
