@@ -32,7 +32,7 @@ export default () => {
       }
       setIsLoaded(true);
     });
-  };
+  }; 
 
   // 사용자 정보 저장하기
   const loadUserInfo = (token) => {    
