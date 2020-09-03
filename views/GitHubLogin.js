@@ -5,6 +5,8 @@ import { Button, Text, View } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 
+import {Restart} from 'fiction-expo-restart';
+
 import styles from '../styles/style';
 
 import keys from '../keys.json';
@@ -25,6 +27,7 @@ export const loadGitHubToken = async () => {
   return token;
 };
 
+
 const storeGitHubToken = async (token) => {
   console.log(`storeGitHubToken()`);
 
@@ -42,6 +45,9 @@ export const deleteGitHubToken = async () => {
   // delete the token
   try {
     await AsyncStorage.removeItem(StorageGitHubTokenName);
+
+    // restart the app
+    Restart();
   } catch (error) {
     console.log(error);
   }
