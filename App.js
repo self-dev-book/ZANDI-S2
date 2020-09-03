@@ -11,9 +11,7 @@ import Loading from './views/Loading';
 import Main from './views/Main';
 import Setting from './views/Setting';
 
-import GitHubAPI from './util/GitHubAPI';
-import { getUserInfo } from '../util/GitHubAPI';
-import { getUserActivity } from '../util/GitHubAPI';
+import { getUserInfo, getUserActivity } from './util/GitHubAPI';
 
 const Stack = createStackNavigator();
 
@@ -42,6 +40,10 @@ export default () => {
       .then(userInfo => {
         const userName = userInfo.name 
         // ...
+      
+      })
+      .catch(error => {
+        console.log(error)
       })
     
   }
@@ -53,7 +55,9 @@ export default () => {
         const userActivityList = actInfo // 몰게써 흑흐긓ㄱ  
         // ...
       })
-    
+      .catch(error => {
+        console.log(error)
+      })
   }
 
   useEffect(() => {

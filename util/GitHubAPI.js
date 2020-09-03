@@ -1,5 +1,5 @@
 import { Octokit } from "@octokit/core";
-
+import GitHubLogin from '../views/GitHubLogin'
 
 export const getUserInfo = async (token) => {
   const octokit = new Octokit({ auth: token });
@@ -15,3 +15,7 @@ export const getUserActivity = async (token) => {
   console.log(data);
   return data;
 }
+
+// 토근 만료됐는지 확인? ;;ㅅ;;
+
+
