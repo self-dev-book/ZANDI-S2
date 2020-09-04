@@ -6,11 +6,13 @@ import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import GitHubLogin, { loadGitHubToken } from './views/GitHubLogin';
+import GitHubLogin, { loadGitHubToken, deleteGitHubToken } from './views/GitHubLogin';
 import Loading from './views/Loading';
 import Main from './views/Main';
 import Setting from './views/Setting';
 import Alarm from './views/Alarm';
+
+import { getUserInfo, getUserActivity } from './util/GitHubAPI';
 
 const Stack = createStackNavigator();
 
@@ -21,13 +23,35 @@ export default () => {
   const [gitHubToken, setGitHubToken] = useState(undefined); // 혹시 모르니 테스트해볼게
 
   // load app
-  const loadApp = () => {
-    loadGitHubToken()
-    .then(token => {
-      setGitHubToken(token);
-      setIsLoaded(true);
-    });
+  const loadApp = async () => {
+    let token = await loadGitHubToken();
+
+    setGitHubToken(token);
+    if (token != null) {
+      await Promise.all([
+        loadUserInfo(token),
+        loadUserActivity(token)
+      ])
+      .catch(async (error) => {
+        console.log(`Error: ${error}`);
+
+        // anyway, delete the token
+        await deleteGitHubToken();
+        setGitHubToken(null);
+      });
+    }
+    setIsLoaded(true);
   };
+
+  // 사용자 정보 저장하기
+  const loadUserInfo = async (token) => {
+    let userInfo = await getUserInfo(token);
+  }
+
+  // 사용자 활동 정보 저장하기
+  const loadUserActivity = async (token) => {
+    let userActivity = await getUserActivity(token);
+  }
 
   useEffect(() => {
     if (gitHubToken === undefined) {
@@ -42,7 +66,7 @@ export default () => {
  //4. 음 그러니까 GitHub에다가 요청해야 한다. 이 토큰 이용정지 해달라고. 약간 카드 발급 받고나서 카드만 잘라버린 꼴 
  //암튼 그래도 일단 뭔가 하기는 했다. 이제 토큰 무효화 요청하는 코드부터 짜야겠다
   return (
-    isLoaded ? // 삼항연산자
+    isLoaded ?
     <NavigationContainer>
       <Stack.Navigator>
         {gitHubToken ? (
