@@ -54,7 +54,9 @@ class Alarm extends React.Component {
     }
 
     inputRefs = {
-        alarm_period: null
+        alarm_period: null,
+        firstTextInput: null,
+        tmp: null
     }
 
 
@@ -103,6 +105,14 @@ class Alarm extends React.Component {
                                             alarm_period: value
                                         });
                                     }}
+
+                                    onUpArrow={() => {
+                                        this.inputRefs.firstTextInput.focus();
+                                      }}
+                                      onDownArrow={() => {
+                                        this.inputRefs.tmp.togglePicker();
+                                      }}
+
                                     style={pickerSelectStyles}
                                     value={this.state.alarm_period}
                                     ref={el => {
