@@ -6,7 +6,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import GitHubLogin, { loadGitHubToken } from './views/GitHubLogin';
+import GitHubLogin, { loadGitHubToken, deleteGitHubToken } from './views/GitHubLogin';
 import Loading from './views/Loading';
 import Main from './views/Main';
 import Setting from './views/Setting';
@@ -22,42 +22,34 @@ export default () => {
   const [gitHubToken, setGitHubToken] = useState(undefined);
 
   // load app
-  const loadApp = () => {
-    loadGitHubToken()
-    .then(token => {
-      setGitHubToken(token);
-      if (token != null) {
-        loadUserInfo(token)
+  const loadApp = async () => {
+    let token = await loadGitHubToken();
+
+    setGitHubToken(token);
+    if (token != null) {
+      await Promise.all([
+        loadUserInfo(token),
         loadUserActivity(token)
-      }
-      setIsLoaded(true);
-    });
-  }; 
+      ])
+      .catch(async (error) => {
+        console.log(`Error: ${error}`);
+
+        // anyway, delete the token
+        await deleteGitHubToken();
+        setGitHubToken(null);
+      });
+    }
+    setIsLoaded(true);
+  };
 
   // 사용자 정보 저장하기
-  const loadUserInfo = (token) => {    
-      getUserInfo(token)
-      .then(userInfo => {
-        const userName = userInfo.name 
-        // ...
-      
-      })
-      .catch(error => {
-        console.log(error)
-      })
-    
+  const loadUserInfo = async (token) => {
+    let userInfo = await getUserInfo(token);
   }
 
   // 사용자 활동 정보 저장하기
-  const loadUserActivity = (token) => {
-      getUserActivity(token)
-      .then(actInfo => {
-        const userActivityList = actInfo // 몰게써 흑흐긓ㄱ  
-        // ...
-      })
-      .catch(error => {
-        console.log(error)
-      })
+  const loadUserActivity = async (token) => {
+    let userActivity = await getUserActivity(token);
   }
 
   useEffect(() => {
@@ -66,10 +58,8 @@ export default () => {
     }
   });
 
-  // 
-
   return (
-    isLoaded ? // 삼항연산자
+    isLoaded ?
     <NavigationContainer>
       <Stack.Navigator>
         {gitHubToken ? (
