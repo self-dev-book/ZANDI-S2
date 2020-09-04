@@ -51,13 +51,13 @@ class Alarm extends React.Component {
         switch_vibe: false,
         switch_push: false,
         alarm_period: undefined,
-        tmp:false
+        //tmp: false
     }
 
     inputRefs = {
         alarm_period: null,
-        firstTextInput: null,
-        tmp: null
+        //firstTextInput: null,
+        //tmp: null
     }
 
 
@@ -74,7 +74,7 @@ class Alarm extends React.Component {
                             switch_vibe: !this.state.switch_alarm,
                             switch_push: !this.state.switch_alarm
                         })
-                    }} 
+                    }}
                 />
                 {this.state.switch_alarm ?
                     (
@@ -107,14 +107,16 @@ class Alarm extends React.Component {
                                         });
                                     }}
 
+                                    /*
                                     onUpArrow={() => {
                                         this.inputRefs.firstTextInput.focus();
-                                      }}
-                                      onDownArrow={() => {
+                                    }}
+                                    onDownArrow={() => {
                                         this.inputRefs.tmp.togglePicker();
-                                      }}
-
+                                    }}
+                                    */
                                     style={pickerSelectStyles}
+                                    useNativeAndroidPickerStyle={false}
                                     value={this.state.alarm_period}
                                     ref={el => {
                                         this.inputRefs.alarm_period = el;
@@ -125,7 +127,7 @@ class Alarm extends React.Component {
                     ) :
                     (
                         <></>
-                    
+
                     )}
 
             </ReactNativeSettingsPage>
@@ -157,4 +159,4 @@ const pickerSelectStyles = StyleSheet.create({
     },
 });
 
-export default Alarm
+export default Alarm    
