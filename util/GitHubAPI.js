@@ -1,5 +1,6 @@
 import { Octokit } from "@octokit/core";
 
+// request to GitHub using Octokit
 const request = async (route, token, options = {}) => {
   const octokit = new Octokit({ auth: token });
   octokit.hook.error("request", async (error, options) => {
