@@ -49,7 +49,7 @@ export const deleteGitHubToken = async () => {
     await AsyncStorage.removeItem(StorageGitHubTokenName);
 
     // restart the app
-    Updates.reload();  
+    // Updates.reload();  
   }
    catch (error) {
     console.log(error);
