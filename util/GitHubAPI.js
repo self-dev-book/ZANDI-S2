@@ -1,20 +1,21 @@
 import { Octokit } from "@octokit/core";
 
-export const getUserInfo = async (token) => {
+const request = async (route, token, options = {}) => {
   const octokit = new Octokit({ auth: token });
-  const { data } = await octokit.request("/user");
-  console.log(data);
+  octokit.hook.error("request", async (error, options) => {
+    console.log(`Error occured on request with status ${error.status}`);
+    if (error.status == 401) {
+      // Bad Credential
+      throw "Bad Credential";
+    } else {
+      throw "Unexpected Error";
+    }
+  });
+
+  // error throwable
+  const { data } = await octokit.request(route, options);
   return data;
 }
 
-
-export const getUserActivity = async (token) => {
-  const octokit = new Octokit({ auth: token });
-  const { data } = await octokit.request("/events");
-  console.log(data);
-  return data;
-}
-
-// 토근 만료됐는지 확인? ;;ㅅ;;
-
-
+export const getUserInfo = async (token) => await request("/user", token);
+export const getUserActivity = async (token) => await request("/events", token);
