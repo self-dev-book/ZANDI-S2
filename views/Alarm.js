@@ -50,7 +50,8 @@ class Alarm extends React.Component {
         switch_sound: false,
         switch_vibe: false,
         switch_push: false,
-        alarm_period: undefined
+        alarm_period: undefined,
+        tmp:false
     }
 
     inputRefs = {
