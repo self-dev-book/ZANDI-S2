@@ -64,7 +64,11 @@ class Settings extends React.Component {
 						text='로그아웃'
 						iconName='user-times'
 						onPressCallback={()=> Alert.alert('logout','로그아웃하시겠습니까?',[
-							{text: 'OK', onPress: () => deleteGitHubToken()},
+							{text: 'OK', onPress: async () => {
+								await deleteGitHubToken()
+								this.props.setGitHubToken(null)
+							}
+						}
 						])} />
 				</SectionRow>
 			</ReactNativeSettingsPage>
