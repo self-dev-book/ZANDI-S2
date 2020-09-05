@@ -44,26 +44,26 @@ const period = [
 
 
 class Alarm extends React.Component {
-    constructor(props){
+    constructor(props) {
         super(props);
-    
-    this.state = {
-        check: false,
-        switch_alarm: false,
-        switch_sound: false,
-        switch_vibe: false,
-        switch_push: false,
-        alarm_period: undefined,
+
+        this.state = {
+            check: false,
+            switch_alarm: false,
+            switch_sound: false,
+            switch_vibe: false,
+            switch_push: false,
+            alarm_period: undefined,
+
+        }
+
+        this.inputRefs = {
+            alarm_period: null,
+
+        }
+
 
     }
-
-    this.inputRefs = {
-        alarm_period: null,
-
-    }
-
-    
-}
 
 
     render() {
@@ -131,7 +131,7 @@ class Alarm extends React.Component {
                         </>
                     ) :
                     (
-                    
+
                         <></>
 
                     )}
