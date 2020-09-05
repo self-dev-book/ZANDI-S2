@@ -44,20 +44,25 @@ const period = [
 
 
 class Alarm extends React.Component {
-    state = {
-        check: false,
-        switch_alarm: false,
-        switch_sound: false,
-        switch_vibe: false,
-        switch_push: false,
-        alarm_period: undefined,
-        //tmp: false
-    }
+    constructor(props) {
+        super(props);
 
-    inputRefs = {
-        alarm_period: null,
-        //firstTextInput: null,
-        //tmp: null
+        this.state = {
+            check: false,
+            switch_alarm: false,
+            switch_sound: false,
+            switch_vibe: false,
+            switch_push: false,
+            alarm_period: undefined,
+
+        }
+
+        this.inputRefs = {
+            alarm_period: null,
+
+        }
+
+
     }
 
 
@@ -97,10 +102,10 @@ class Alarm extends React.Component {
                                 text="알람 주기" >
                                 <View paddingVertical={5} />
                                 <RNPickerSelect
-                                    items={period}
                                     placeholder={{
                                         label: '알람 주기를 선택하세요'
                                     }}
+                                    items={period}
                                     onValueChange={value => {
                                         this.setState({
                                             alarm_period: value
@@ -116,8 +121,8 @@ class Alarm extends React.Component {
                                     }}
                                     */
                                     style={pickerSelectStyles}
-                                    useNativeAndroidPickerStyle={false}
                                     value={this.state.alarm_period}
+                                    useNativeAndroidPickerStyle={false}
                                     ref={el => {
                                         this.inputRefs.alarm_period = el;
                                     }}
@@ -126,6 +131,7 @@ class Alarm extends React.Component {
                         </>
                     ) :
                     (
+
                         <></>
 
                     )}
