@@ -5,10 +5,6 @@ import { Button, Text, View } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 
-import { Updates } from 'expo';
-
-//import {Restart} from 'fiction-expo-restart';
-
 import styles from '../styles/style';
 
 import keys from '../keys.json';
