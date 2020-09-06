@@ -97,7 +97,10 @@ class Alarm extends React.Component {
                                     text='푸시알림'
                                     _value={this.state.switch_push}
                                     _onValueChange={() => { this.setState({ switch_push: !this.state.switch_push }) }} />
+
+                                    
                             </SectionRow>
+
                             <SectionRow
                                 text="알람 주기" >
                                 <View paddingVertical={5} />
@@ -128,6 +131,8 @@ class Alarm extends React.Component {
                                     }}
                                 />
                             </SectionRow>
+                            
+                        
                         </>
                     ) :
                     (
