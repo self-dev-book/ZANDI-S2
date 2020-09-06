@@ -11,6 +11,7 @@
     "@octokit/core": "^3.1.2",
     "@react-native-community/async-storage": "~1.11.0",
     "@react-native-community/masked-view": "^0.1.10",
+    "@react-native-community/picker": "1.6.0",
     "@react-navigation/native": "^5.7.3",
     "@react-navigation/stack": "^5.9.0",
     "axios": "^0.20.0",

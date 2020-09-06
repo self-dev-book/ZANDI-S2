@@ -1,68 +1,65 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Button, Image, Text, View } from 'react-native';
+import React , { useState }from 'react';
+import { StyleSheet, Button, Image, Text, TouchableOpacity, View } from 'react-native';
 import ReactNativeSettingsPage, {
     SectionRow,
     NavigateRow,
+    SliderRow ,
     SwitchRow,
     CheckRow
 } from 'react-native-settings-page';
-import RNPickerSelect, { defaultStyles } from 'react-native-picker-select';
 
 import styles from '../styles/style';
 
-const period = [
-    {
-        label: '1일',
-        value: '1day',
-    },
-    {
-        label: '2일',
-        value: '2day',
-    },
-    {
-        label: '3일',
-        value: '3day',
-    },
-    {
-        label: '4일',
-        value: '4day',
-    },
-    {
-        label: '5일',
-        value: '5day',
-    },
-    {
-        label: '6일',
-        value: '6day',
-    },
-    {
-        label: '7일',
-        value: '7day',
-    }
-];
+// const period = [
+//     {
+//         label: '1일',
+//         value: '1day',
+//     },
+//     {
+//         label: '2일',
+//         value: '2day',
+//     },
+//     {
+//         label: '3일',
+//         value: '3day',
+//     },
+//     {
+//         label: '4일',
+//         value: '4day',
+//     },
+//     {
+//         label: '5일',
+//         value: '5day',
+//     },
+//     {
+//         label: '6일',
+//         value: '6day',
+//     },
+//     {
+//         label: '7일',
+//         value: '7day',
+//     }
+// ];
 
 
 class Alarm extends React.Component {
-    constructor(props) {
-        super(props);
 
-        this.state = {
-            check: false,
-            switch_alarm: false,
-            switch_sound: false,
-            switch_vibe: false,
-            switch_push: false,
-            alarm_period: undefined,
-
-        }
-
-        this.inputRefs = {
-            alarm_period: null,
-
-        }
-
-
+    onPress_plus = () => {
+        if(this.state.count<7)
+        this.setState({count:this.state.count+1} );
+    }
+    onPress_minus = () => {
+        if(this.state.count>1)
+        this.setState({count:this.state.count-1} )
+    }
+    state = {
+        count :1,
+        check: false,
+        switch_alarm: false,
+        switch_sound: false,
+        switch_vibe: false,
+        switch_push: false
     }
 
 
@@ -84,7 +81,6 @@ class Alarm extends React.Component {
                 {this.state.switch_alarm ?
                     (
                         <>
-                            <SectionRow>
                                 <SwitchRow
                                     text='소리'
                                     _value={this.state.switch_sound}
@@ -98,45 +94,31 @@ class Alarm extends React.Component {
                                     _value={this.state.switch_push}
                                     _onValueChange={() => { this.setState({ switch_push: !this.state.switch_push }) }} />
 
-                                    
+                            <SectionRow text="알람주기 설정">
+                                <View style={opacityStyles.container}>
+                                    <TouchableOpacity
+                                        style={opacityStyles.button}
+                                        onPress={this.onPress_minus}
+                                    >
+                                        <Text style={opacityStyles.buttonText}>-</Text>
+                                    </TouchableOpacity>
+                                    <View style={opacityStyles.countContainer}>
+                                        <Text style={opacityStyles.countText}>{this.state.count} day</Text>
+                                    </View>
+                                    <TouchableOpacity
+                                        style={opacityStyles.button}
+                                        onPress={this.onPress_plus}
+                                    >
+                                        <Text style={opacityStyles.buttonText}>+</Text>
+                                    </TouchableOpacity>
+                                </View>
+
                             </SectionRow>
 
-                            <SectionRow
-                                text="알람 주기" >
-                                <View paddingVertical={5} />
-                                <RNPickerSelect
-                                    placeholder={{
-                                        label: '알람 주기를 선택하세요'
-                                    }}
-                                    items={period}
-                                    onValueChange={value => {
-                                        this.setState({
-                                            alarm_period: value
-                                        });
-                                    }}
 
-                                    /*
-                                    onUpArrow={() => {
-                                        this.inputRefs.firstTextInput.focus();
-                                    }}
-                                    onDownArrow={() => {
-                                        this.inputRefs.tmp.togglePicker();
-                                    }}
-                                    */
-                                    style={pickerSelectStyles}
-                                    value={this.state.alarm_period}
-                                    useNativeAndroidPickerStyle={false}
-                                    ref={el => {
-                                        this.inputRefs.alarm_period = el;
-                                    }}
-                                />
-                            </SectionRow>
-                            
-                        
                         </>
                     ) :
                     (
-
                         <></>
 
                     )}
@@ -146,28 +128,35 @@ class Alarm extends React.Component {
     }
 }
 
+const opacityStyles = StyleSheet.create({
+    container:{
+        flexDirection: 'row',
+        margin:5
+        
+    },
+    button:{
+        flex: 1,
+        alignItems: "center",
+        backgroundColor: "#DDDDDD",
+        padding: 10,
+        borderRadius: 40,
+        height: 40,
+        width: 40
+    },
+    countContainer: {
+        flex: 3,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    countText:{
+        textAlign: 'center',
+        textAlignVertical: 'center',
+        fontSize: 15
+    },
+    buttonText:{
+        fontSize: 15
+    }
+})
 
-const pickerSelectStyles = StyleSheet.create({
-    inputIOS: {
-        fontSize: 16,
-        paddingVertical: 12,
-        paddingHorizontal: 10,
-        borderWidth: 1,
-        borderColor: 'gray',
-        borderRadius: 4,
-        color: 'black',
-        paddingRight: 30, // to ensure the text is never behind the icon
-    },
-    inputAndroid: {
-        fontSize: 16,
-        paddingHorizontal: 10,
-        paddingVertical: 8,
-        borderWidth: 0.5,
-        borderColor: 'purple',
-        borderRadius: 8,
-        color: 'black',
-        paddingRight: 30, // to ensure the text is never behind the icon
-    },
-});
 
 export default Alarm    
