@@ -16,7 +16,6 @@
     "axios": "^0.20.0",
     "expo": "^38.0.8",
     "expo-status-bar": "^1.0.2",
-    "fiction-expo-restart": "1.0.4",
     "octokit": "1.0.0-hello-world",
     "pod": "0.9.0",
     "react": "~16.11.0",
