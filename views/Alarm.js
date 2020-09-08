@@ -46,7 +46,7 @@ import styles from '../styles/style';
 async function sendPushNotification(expoPushToken, count) {
     const message = {
       to: expoPushToken, //이 토큰 갖는 디바이스로
-      sound: 'default', //소리는
+      sound: 'default', 
       title: '잔디 쑥쑥',
       body: `커밋한 지 ${count}일 째! 잔디를 키워주세요 :)`,
       data: { data: 'goes here' },
