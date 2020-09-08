@@ -10,7 +10,7 @@ import ReactNativeSettingsPage, {
 } from 'react-native-settings-page';
 
 import styles from '../styles/style';
-
+//import { sendPushNotification } from '../App'
 // const period = [
 //     {
 //         label: '1일',
@@ -42,16 +42,42 @@ import styles from '../styles/style';
 //     }
 // ];
 
+async function sendPushNotification(expoPushToken, count) {
+    const message = {
+      to: expoPushToken,
+      sound: 'default',
+      title: '잔디 쑥쑥',
+      body: `커밋한 지 ${count}일 째! 잔디를 키워주세요 :)`,
+      data: { data: 'goes here' },
+    };
+  
+    await fetch('https://exp.host/--/api/v2/push/send', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Accept-encoding': 'gzip, deflate',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(message),
+    });
+  }
 
 class Alarm extends React.Component {
 
     onPress_plus = () => {
         if(this.state.count<7)
         this.setState({count:this.state.count+1} );
+        this.push_notification()
     }
     onPress_minus = () => {
         if(this.state.count>1)
         this.setState({count:this.state.count-1} )
+        this.push_notification()
+    }
+    push_notification = () => {
+        if(this.props.dayAfterCommit==this.state.count){
+            sendPushNotification(this.props.expoPushToken, this.state.count)
+        }
     }
     state = {
         count :1,

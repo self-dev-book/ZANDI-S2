@@ -1,7 +1,10 @@
 import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState, useEffect, useRef  } from 'react';
+import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
+import * as Permissions from 'expo-permissions';
+import {  Platform } from 'react-native';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -12,15 +15,87 @@ import Main from './views/Main';
 import Setting from './views/Setting';
 import Alarm from './views/Alarm';
 
+
 import { getUserInfo, getUserActivity } from './util/GitHubAPI';
+
 
 const Stack = createStackNavigator();
 
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
+
+async function registerForPushNotificationsAsync() {
+  let pushToken;
+  if (Constants.isDevice) {
+    const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+    let finalStatus = existingStatus;
+    if (existingStatus !== 'granted') {
+      const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+      finalStatus = status;
+    }
+    if (finalStatus !== 'granted') {
+      alert('Failed to get push token for push notification!');
+      return;
+    }
+    pushToken = (await Notifications.getExpoPushTokenAsync()).data;
+    console.log(pushToken);
+  } else {
+    alert('Must use physical device for Push Notifications');
+  }
+
+  if (Platform.OS === 'android') {
+    Notifications.setNotificationChannelAsync('default', {
+      name: 'default',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#FF231F7C',
+    });
+  }
+
+  return pushToken;
+}
+
+
+
+
 export default () => {
 
-  // state
+  // state 
   const [isLoaded, setIsLoaded] = useState(false);
   const [gitHubToken, setGitHubToken] = useState(undefined); // 혹시 모르니 테스트해볼게
+
+  // state_push
+  const [expoPushToken, setExpoPushToken] = useState('');
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
+  const responseListener = useRef();
+
+  
+  useEffect(() => {
+    registerForPushNotificationsAsync().then(pushToken => setExpoPushToken(pushToken));
+
+    // This listener is fired whenever a notification is received while the app is foregrounded
+    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+      setNotification(notification);
+    });
+
+    // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+      console.log(response);
+    });
+
+    return () => {
+      Notifications.removeNotificationSubscription(notificationListener);
+      Notifications.removeNotificationSubscription(responseListener);
+    };
+  }, []);
+
 
   // load app
   const loadApp = async () => {
@@ -75,10 +150,11 @@ export default () => {
             <Stack.Screen name="Setting">
             {props => <Setting {...props} setGitHubToken={setGitHubToken} gitHubToken={gitHubToken} name="test" email="test@test.test" avatar="https://avatars3.githubusercontent.com/u/43772472?s=60&v=4"/>}
             </Stack.Screen>
-            <Stack.Screen 
-              name="Alarm" 
-              component={Alarm}
-              options={{title:'알람 설정'}} />
+            <Stack.Screen name="Alarm" options={{title:'알람 설정'}} >
+						{props => <Alarm {...props} expoPushToken={expoPushToken} dayAfterCommit={1}/>}
+
+						</Stack.Screen>
+              
           </>
         ) : (
           <>
