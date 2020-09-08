@@ -42,10 +42,11 @@ import styles from '../styles/style';
 //     }
 // ];
 
+//토큰 받아서 해당 토큰을 갖는 디바이스로 푸시알람 보내라고 요청하는 함수! (아직 진동, 소리 세팅 안했으니까 이 부분 공부하는 것도 좋을 듯)
 async function sendPushNotification(expoPushToken, count) {
     const message = {
-      to: expoPushToken,
-      sound: 'default',
+      to: expoPushToken, //이 토큰 갖는 디바이스로
+      sound: 'default', //소리는
       title: '잔디 쑥쑥',
       body: `커밋한 지 ${count}일 째! 잔디를 키워주세요 :)`,
       data: { data: 'goes here' },
@@ -63,7 +64,8 @@ async function sendPushNotification(expoPushToken, count) {
   }
 
 class Alarm extends React.Component {
-
+    //플러스, 또는 마이너스 버튼 누를때마다 푸시알람 가는 조건인지 확인하는 함수(push_notification) 호출!
+    //사실 push_notification 또는 sendPushNotification 함수를 어디에서 호출해야지 매번 업데이트되는 dayAfterCommit이랑 비교해서 특정 시간에 푸시가는지 잘 모르겠어서 일단 이렇게 해놨어요
     onPress_plus = () => {
         if(this.state.count<7)
         this.setState({count:this.state.count+1} );
@@ -75,7 +77,7 @@ class Alarm extends React.Component {
         this.push_notification()
     }
     push_notification = () => {
-        if(this.props.dayAfterCommit==this.state.count){
+        if(this.props.dayAfterCommit==this.state.count){ //count==1일때 push알람 가게!
             sendPushNotification(this.props.expoPushToken, this.state.count)
         }
     }
