@@ -43,10 +43,15 @@ import styles from '../styles/style';
 // ];
 
 //토큰 받아서 해당 토큰을 갖는 디바이스로 푸시알람 보내라고 요청하는 함수! (아직 진동, 소리 세팅 안했으니까 이 부분 공부하는 것도 좋을 듯)
+//https://docs.expo.io/push-notifications/sending-notifications/#message-request-format
 async function sendPushNotification(expoPushToken, count) {
     const message = {
       to: expoPushToken, //이 토큰 갖는 디바이스로
       sound: 'default', 
+      vibrate: 'default',
+      NotificationTriggerInput:'DateTriggerInput',
+      //DateTriggerInput: Date+count ,
+      //https://snack.expo.io/@aboutreact/showtoday-date-example?session_id=snack-session-TT5a8E!7q :date 가져오는 방법
       title: '잔디 쑥쑥',
       body: `커밋한 지 ${count}일 째! 잔디를 키워주세요 :)`,
       data: { data: 'goes here' },
