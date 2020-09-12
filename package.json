@@ -26,12 +26,13 @@
     "react-native-reanimated": "^1.13.0",
     "react-native-restart": "0.0.17",
     "react-native-safe-area": "0.5.1",
+    "react-native-safe-area-context": "~3.0.7",
     "react-native-safe-area-view": "^1.1.1",
     "react-native-screens": "^2.10.1",
     "react-native-settings-page": "2.0.6",
+    "react-native-swiper": "^1.6.0",
     "react-native-web": "0.11.7",
-    "react-native-webview": "^10.8.2",
-    "react-native-safe-area-context": "~3.0.7"
+    "react-native-webview": "^10.8.2"
   },
   "devDependencies": {
     "@babel/core": "^7.8.6",

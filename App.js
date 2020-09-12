@@ -47,7 +47,7 @@ export default () => {
       <Stack.Navigator>
         {gitHubToken ? (
           <>
-            <Stack.Screen name="Main" component={Main} />
+            <Stack.Screen name="Main" component={Main} options={{ headerShown: false }} />
             <Stack.Screen name="Setting">
               {props => <Setting {...props} gitHubToken={gitHubToken} name="test" email="test@test.test" avatar="https://avatars3.githubusercontent.com/u/43772472?s=60&v=4"/>}
             </Stack.Screen>
