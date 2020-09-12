@@ -6,10 +6,13 @@ import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import GitHubLogin, { loadGitHubToken } from './views/GitHubLogin';
+import GitHubLogin, { loadGitHubToken, deleteGitHubToken } from './views/GitHubLogin';
 import Loading from './views/Loading';
 import Main from './views/Main';
 import Setting from './views/Setting';
+import Alarm from './views/Alarm';
+
+import { getUserInfo, getUserActivity } from './util/GitHubAPI';
 
 const Stack = createStackNavigator();
 
@@ -17,16 +20,52 @@ export default () => {
 
   // state
   const [isLoaded, setIsLoaded] = useState(false);
-  const [gitHubToken, setGitHubToken] = useState(undefined);
+  const [gitHubToken, setGitHubToken] = useState(undefined); // 혹시 모르니 테스트해볼게
+  const [name, setName] = useState(undefined);
+  const [email, setEmail] = useState(undefined);
+  const [avatar, setAvatar] = useState(undefined);
 
   // load app
-  const loadApp = () => {
-    loadGitHubToken()
-    .then(token => {
-      setGitHubToken(token);
-      setIsLoaded(true);
-    });
+  const loadApp = async () => {
+    let token = await loadGitHubToken();
+    resetGitHubToken(token);
   };
+
+  const resetGitHubToken = async (token) => {
+    setGitHubToken(token);
+    if (token != null) {
+      await Promise.all([
+        loadUserInfo(token),
+        loadUserActivity(token)
+      ])
+      .catch(async (error) => {
+        console.log(`Error: ${error}`);
+
+        // anyway, delete the token
+        await deleteGitHubToken();
+        setGitHubToken(null);
+      });
+    }
+    setIsLoaded(true);
+  }
+
+  // 사용자 정보 저장하기
+  const loadUserInfo = async (token) => {
+    let userInfo = await getUserInfo(token);
+    setName(userInfo.name);
+    setEmail(userInfo.email);
+    setAvatar(userInfo.avatar_url);
+  }
+
+  // 사용자 활동 정보 저장하기
+  const loadUserActivity = async (token) => {
+    let userActivity = await getUserActivity(token);
+    for (let activity of userActivity) {
+      console.log(activity.created_at)
+    }
+    console.log(typeof userActivity)
+    console.log(userActivity.length)
+  }
 
   useEffect(() => {
     if (gitHubToken === undefined) {
@@ -34,19 +73,31 @@ export default () => {
     }
   });
 
+//TODO: 토큰 무효화
+// 1. 토큰을 기기에서 지웠다.
+ //2. 하지만 그 토큰을 다시 쓸 수는 있다.
+ //3. 그래서 토큰을 무효화해야 한다.
+ //4. 음 그러니까 GitHub에다가 요청해야 한다. 이 토큰 이용정지 해달라고. 약간 카드 발급 받고나서 카드만 잘라버린 꼴 
+ //암튼 그래도 일단 뭔가 하기는 했다. 이제 토큰 무효화 요청하는 코드부터 짜야겠다
   return (
-    isLoaded ? // 삼항연산자
+    isLoaded ?
     <NavigationContainer>
       <Stack.Navigator>
         {gitHubToken ? (
           <>
             <Stack.Screen name="Main" component={Main} />
-            <Stack.Screen name="Setting" component={Setting} />
+            <Stack.Screen name="Setting">
+            {props => <Setting {...props} setGitHubToken={setGitHubToken} gitHubToken={gitHubToken} name={name} email={email} avatar={avatar} />}
+            </Stack.Screen>
+            <Stack.Screen 
+              name="Alarm" 
+              component={Alarm}
+              options={{title:'알람 설정'}} />
           </>
         ) : (
           <>
             <Stack.Screen name="GitHubLogin">
-              {props => <GitHubLogin {...props} setGitHubToken={setGitHubToken} />}
+              {props => <GitHubLogin {...props} setGitHubToken={resetGitHubToken} />}
             </Stack.Screen>
           </>
         )

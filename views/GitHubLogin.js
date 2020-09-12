@@ -2,89 +2,123 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
 import { WebView } from 'react-native-webview';
 import { Button, Text, View } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 
 import styles from '../styles/style';
 
 import keys from '../keys.json';
 
-export const loadGitHubToken = () => {
-  console.log(`loadGitHubToken()`);
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      // return the token
-      resolve("test access token");
-    }, 1500);
-  });
+const StorageGitHubTokenName = 'GitHubToken';
+
+export const loadGitHubToken = async () => {
+  let token = null;
+
+  // return the token (or null)
+  try {
+    token = await AsyncStorage.getItem(StorageGitHubTokenName);
+  } catch (error) {
+    console.log(error);
+  }
+
+  console.log(`loadGitHubToken(): ${token}`);
+  return token;
 };
 
-const requestGitHubToken = (state, setGitHubState, setGitHubToken, setGitHubTokenRequested) => {
+
+const storeGitHubToken = async (token) => {
+  console.log(`storeGitHubToken()`);
+
+  // store the token
+  try {
+    await AsyncStorage.setItem(StorageGitHubTokenName, token);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const deleteGitHubToken = async () => {
+  console.log(`deleteGitHubToken()`);
+
+  // delete the token
+  try {
+    await AsyncStorage.removeItem(StorageGitHubTokenName);
+  }
+   catch (error) {
+    console.log(error);
+  }
+};
+
+const requestGitHubToken = async (state, setGitHubState, setGitHubToken, setGitHubTokenRequested) => {
   console.log(`requestGitHubToken(${state})`);
-  axios.get(`${keys.GitHubLoginMiddlewareURL_Token}?state=${state}`)
-  .then(response => {
-    let result = response.data.result;
-    let message = response.data.message;
+
+  // request an access token
+  try {
+    let {
+      data: {
+        result,
+        message
+      }
+    } = await axios.get(`${keys.GitHubLoginMiddlewareURL_Token}?state=${state}`);
 
     if (result == 1) {
       // success
+      storeGitHubToken(message);
       setGitHubToken(message);
+      return;
     } else {
       // fail
       console.log(message);
     }
-  })
-  .catch(err => {
-    console.log(err);
+  } catch (error) {
+    console.log(error);
     setGitHubState(null);
-  })
-  .then(() => {
-    setGitHubTokenRequested(false);
-  })
+  }
+
+  setGitHubTokenRequested(false);
 };
 
-const getRandomState = (setGitHubState) => {
+const getRandomState = async (setGitHubState) => {
   console.log(`getRandomState()`);
-  axios.get(keys.GitHubLoginMiddlewareURL_State)
-  .then(response => {
-    let state = response.data.message;
-    setGitHubState(state);
-    console.log(state);
-  })
-  .catch(err => {
-    setGitHubState(null);
-    console.log(err);
-  });
+  let state = null;
+
+  // request a random state
+  try {
+    let {
+      data: {
+        message
+      }
+    } = await axios.get(keys.GitHubLoginMiddlewareURL_State);
+
+    // message is the state
+    state = message;
+  } catch (error) {
+    console.log(error);
+  }
+
+  // set token
+  setGitHubState(state);
 };
 
 export default (props) => {
   // state
   const [gitHubState, setGitHubState] = useState(undefined);
-  const [gitHubToken, setGitHubToken] = useState(null);
   const [gitHubTokenRequested, setGitHubTokenRequested] = useState(false);
 
   useEffect(() => {
     if (!gitHubState) {
+      // state not exist
       getRandomState(setGitHubState);
-    } else if (!gitHubToken) {
-      if (gitHubTokenRequested === false) {
-        setGitHubTokenRequested(true);
-        setTimeout(() => {
-          requestGitHubToken(gitHubState, setGitHubState, setGitHubToken, setGitHubTokenRequested);
-        }, 500);
-      }
-    } else {
-      props.setGitHubToken(gitHubToken);
+    } else if (gitHubTokenRequested === false) {
+      // able to request a token
+      setGitHubTokenRequested(true);
+      setTimeout(() => {
+        requestGitHubToken(gitHubState, setGitHubState, props.setGitHubToken, setGitHubTokenRequested);
+      }, 500);
     }
   });
 
-  if (gitHubToken) {
-    return (
-      <View style={styles.container}>
-        <Text>Your access token is {gitHubToken}. Please wait.</Text>
-        <StatusBar style="auto" />
-      </View>
-    );
-  } else if (gitHubState) {
+  if (gitHubState) {
     // state exist
     return (
       <WebView
@@ -108,7 +142,7 @@ export default (props) => {
     // state not loaded
     return (
       <View style={styles.container}>
-        <Text>Please wait.</Text>
+        <Text>Please wait...</Text>
         <StatusBar style="auto" />
       </View>
     );
