@@ -25,7 +25,7 @@ const request = async (route, token, options = {}) => {
 export const getUserInfo = async (token) => await request("GET /user", token);
 export const getUserEvents = async (token, username) => await request(`GET /users/${username}/events`, token, {
 	username: username,
-	per_page: 100 // 페이지 최대값
+	per_page:5 // 페이지 최대값
 });
 
 // export const deleteAccessToken = async (token) => await request(`DELETE /applications/${GitHubLogin_ClientID}/tokens/${token}`, token, {

@@ -71,7 +71,8 @@ export default () => {
   const [name, setName] = useState(undefined);
   const [email, setEmail] = useState(undefined);
   const [avatar, setAvatar] = useState(undefined);
-  const [lastCommitDay, setLastCommitDay] = useState(undefined);
+  const [lastEventDate, setLastEventDate] = useState(undefined);
+  const [EventDateList, setEventDateList] = useState(undefined);
   
   // state_push
   const [expoPushToken, setExpoPushToken] = useState('');
@@ -136,15 +137,27 @@ export default () => {
     setAvatar(userInfo.avatar_url);
 
     // 사용자 활동 정보 저장하기
-    let userActivity = await getUserEvents(token, userInfo.login);
+    let userActivity = await getUserEvents(token, userInfo.login);      
+    let myCommitList = new Array;
+
     for (let activity of userActivity) {
-      //console.log(activity)
-      console.log(activity.created_at+" "+activity.type)
+      //console.log(activity.created_at)  // 커밋 시간
+      //console.log(activity.payload.commits);
+
+      // 다른 사람들의 커밋도 가져오는 문제를 해결하고자 내 커밋만 저장할 변수 생성
+      let commitsPerDay = activity.payload.commits;
+      for(let commit of commitsPerDay){
+        // 내 아이디만 걸리게끔
+        if(commit.author.name == userInfo.login){
+          myCommitList.push(activity.created_at);
+        }
+      }
+    
       // if(activity.type!="WatchEvent"){
       //   setLastCommitDay(activity.created_at)
-      //   break;
-      
+      //   break; 
     }
+    console.log(myCommitList);
     //console.log(typeof userActivity)
     //console.log(userActivity.length)
 
