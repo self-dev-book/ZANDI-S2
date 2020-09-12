@@ -50,7 +50,7 @@ async function sendPushNotification(expoPushToken, count) {
       sound: 'default', 
       vibrate: 'default',
       NotificationTriggerInput:'DateTriggerInput',
-      //DateTriggerInput: Date+count ,
+    	DateTriggerInput: Math.round(new Date("2013/09/05 15:34:00").getTime()/1000),
       //https://snack.expo.io/@aboutreact/showtoday-date-example?session_id=snack-session-TT5a8E!7q :date 가져오는 방법
       title: '잔디 쑥쑥',
       body: `커밋한 지 ${count}일 째! 잔디를 키워주세요 :)`,
@@ -82,7 +82,7 @@ class Alarm extends React.Component {
         this.push_notification()
     }
     push_notification = () => {
-        console.log(this.props.lastCommitDay)
+        console.log(this.props.lastEventDate)
         if(this.props.dayAfterCommit==this.state.count){ //count==1일때 push알람 가게!
             sendPushNotification(this.props.expoPushToken, this.state.count)
         }
