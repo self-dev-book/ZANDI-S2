@@ -7,7 +7,8 @@ import ReactNativeSettingsPage, {
 	CheckRow
 } from 'react-native-settings-page';
 
-import { deleteGitHubToken } from './GitHubLogin.js';
+import { deleteGitHubToken } from './GitHubLogin';
+import { deleteAccessToken } from '../util/GitHubAPI';
 
 // import {getUserInfo} from '../util/GitHubAPI.js'
 import styles from '../styles/style';
@@ -66,6 +67,7 @@ class Settings extends React.Component {
 						onPressCallback={()=> Alert.alert('logout','로그아웃하시겠습니까?',[
 							{text: 'OK', onPress: async () => {
 								await deleteGitHubToken()
+								await deleteAccessToken(this.props.gitHubToken);
 								this.props.setGitHubToken(null)
 							}
 						}

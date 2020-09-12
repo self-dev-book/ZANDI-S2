@@ -69,6 +69,9 @@ export default () => {
   // state 
   const [isLoaded, setIsLoaded] = useState(false);
   const [gitHubToken, setGitHubToken] = useState(undefined); // 혹시 모르니 테스트해볼게
+  const [name, setName] = useState(undefined);
+  const [email, setEmail] = useState(undefined);
+  const [avatar, setAvatar] = useState(undefined);
 
   // state_push
   const [expoPushToken, setExpoPushToken] = useState('');
@@ -100,7 +103,10 @@ export default () => {
   // load app
   const loadApp = async () => {
     let token = await loadGitHubToken();
+    resetGitHubToken(token);
+  };
 
+  const resetGitHubToken = async (token) => {
     setGitHubToken(token);
     if (token != null) {
       await Promise.all([
@@ -116,16 +122,24 @@ export default () => {
       });
     }
     setIsLoaded(true);
-  };
+  }
 
   // 사용자 정보 저장하기
   const loadUserInfo = async (token) => {
     let userInfo = await getUserInfo(token);
+    setName(userInfo.name);
+    setEmail(userInfo.email);
+    setAvatar(userInfo.avatar_url);
   }
 
   // 사용자 활동 정보 저장하기
   const loadUserActivity = async (token) => {
     let userActivity = await getUserActivity(token);
+    for (let activity of userActivity) {
+      console.log(activity.created_at)
+    }
+    console.log(typeof userActivity)
+    console.log(userActivity.length)
   }
 
   useEffect(() => {
@@ -148,7 +162,7 @@ export default () => {
           <>
             <Stack.Screen name="Main" component={Main} />
             <Stack.Screen name="Setting">
-            {props => <Setting {...props} setGitHubToken={setGitHubToken} gitHubToken={gitHubToken} name="test" email="test@test.test" avatar="https://avatars3.githubusercontent.com/u/43772472?s=60&v=4"/>}
+            {props => <Setting {...props} setGitHubToken={setGitHubToken} gitHubToken={gitHubToken} name={name} email={email} avatar={avatar} />}
             </Stack.Screen>
             <Stack.Screen name="Alarm" options={{title:'알람 설정'}} >
 						{props => <Alarm {...props} expoPushToken={expoPushToken} dayAfterCommit={1}/>}
@@ -159,7 +173,7 @@ export default () => {
         ) : (
           <>
             <Stack.Screen name="GitHubLogin">
-              {props => <GitHubLogin {...props} setGitHubToken={setGitHubToken} />}
+              {props => <GitHubLogin {...props} setGitHubToken={resetGitHubToken} />}
             </Stack.Screen>
           </>
         )
