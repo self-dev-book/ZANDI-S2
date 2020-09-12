@@ -12,7 +12,7 @@ import Main from './views/Main';
 import Setting from './views/Setting';
 import Alarm from './views/Alarm';
 
-import { getUserInfo, getUserActivity } from './util/GitHubAPI';
+import { getUserInfo, getUserEvents } from './util/GitHubAPI';
 
 const Stack = createStackNavigator();
 
@@ -32,12 +32,12 @@ export default () => {
   };
 
   const resetGitHubToken = async (token) => {
+
+    // set state
     setGitHubToken(token);
+
     if (token != null) {
-      await Promise.all([
-        loadUserInfo(token),
-        loadUserActivity(token)
-      ])
+      loadUserInfo(token)
       .catch(async (error) => {
         console.log(`Error: ${error}`);
 
@@ -46,25 +46,26 @@ export default () => {
         setGitHubToken(null);
       });
     }
+
     setIsLoaded(true);
   }
 
   // 사용자 정보 저장하기
   const loadUserInfo = async (token) => {
     let userInfo = await getUserInfo(token);
+    console.log(userInfo);
+
+    // set state
     setName(userInfo.name);
     setEmail(userInfo.email);
     setAvatar(userInfo.avatar_url);
-  }
 
-  // 사용자 활동 정보 저장하기
-  const loadUserActivity = async (token) => {
-    let userActivity = await getUserActivity(token);
+    // 사용자 활동 정보 저장하기
+    let userActivity = await getUserEvents(token, userInfo.login);
     for (let activity of userActivity) {
-      console.log(activity.created_at)
+      console.log(activity.type, activity.created_at);
     }
-    console.log(typeof userActivity)
-    console.log(userActivity.length)
+    console.log(userActivity.length);
   }
 
   useEffect(() => {
