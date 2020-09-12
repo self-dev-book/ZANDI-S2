@@ -72,7 +72,8 @@ export default () => {
   const [name, setName] = useState(undefined);
   const [email, setEmail] = useState(undefined);
   const [avatar, setAvatar] = useState(undefined);
-
+  const [lastCommitDay, setLastCommitDay] = useState(undefined);
+  
   // state_push
   const [expoPushToken, setExpoPushToken] = useState('');
   const [notification, setNotification] = useState(false);
@@ -136,10 +137,16 @@ export default () => {
   const loadUserActivity = async (token) => {
     let userActivity = await getUserActivity(token);
     for (let activity of userActivity) {
-      console.log(activity.created_at)
+      //console.log(activity)
+      console.log(activity.created_at+" "+activity.type)
+      // if(activity.type!="WatchEvent"){
+      //   setLastCommitDay(activity.created_at)
+      //   break;
+      
     }
-    console.log(typeof userActivity)
-    console.log(userActivity.length)
+    //console.log(typeof userActivity)
+    //console.log(userActivity.length)
+
   }
 
   useEffect(() => {
@@ -165,7 +172,7 @@ export default () => {
             {props => <Setting {...props} setGitHubToken={setGitHubToken} gitHubToken={gitHubToken} name={name} email={email} avatar={avatar} />}
             </Stack.Screen>
             <Stack.Screen name="Alarm" options={{title:'알람 설정'}} >
-						{props => <Alarm {...props} expoPushToken={expoPushToken} dayAfterCommit={1}/>}
+						{props => <Alarm {...props} expoPushToken={expoPushToken} lastCommitDay={lastCommitDay}/>}
 
 						</Stack.Screen>
               

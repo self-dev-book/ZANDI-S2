@@ -82,6 +82,7 @@ class Alarm extends React.Component {
         this.push_notification()
     }
     push_notification = () => {
+        console.log(this.props.lastCommitDay)
         if(this.props.dayAfterCommit==this.state.count){ //count==1일때 push알람 가게!
             sendPushNotification(this.props.expoPushToken, this.state.count)
         }
