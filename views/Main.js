@@ -34,11 +34,10 @@ export default class App extends React.Component {
 					<View
 						style={[
 							{
-								flex: 1,
 								width: '100%',
 								aspectRatio: 1,
 								borderRadius: 6,
-								margin: 8
+								marginVertical: 8
 							},
 							{ backgroundColor: backGroundColors[i][1] }
 						]}
@@ -48,12 +47,50 @@ export default class App extends React.Component {
 		}
 	}
 
-	makeRow(count_row) {
+	makeWeek() {
+		let day = ['월', '화', '수', '목', '금', '토', '일'];
+
+		return (
+			<View style={{
+				width: '16.6666%',
+				flexDirection: 'column',
+				justifyContent: 'space-around',
+			}}>
+			{
+				day.map((value, index) => {
+					return (
+						<View style={{
+							alignItems: 'center', // 주축
+							justifyContent: 'center', // 보조축
+							aspectRatio: 1,
+							borderRadius: 6,
+						}}>
+							<Text
+								style={{
+									fontSize: '16',
+									color: '#a0a0a0'
+								}}
+							>
+								{value}
+							</Text>
+						</View>
+					);
+				})
+			}
+			</View>
+		);
+	}
+
+	makeColumn(count_column) {
 		// counts should be 1 * 5 matrix
 		return (
-			<View style={{ flexDirection: 'row' }}>
+			<View style={{
+				flex: 1,
+				flexDirection: 'column',
+				paddingHorizontal: 8,
+			}}>
 				{
-					count_row.map((value, index) => this.makeTile(value))
+					count_column.map((value, index) => this.makeTile(value))
 				}
 			</View>
 		);
@@ -62,9 +99,12 @@ export default class App extends React.Component {
 	makeTable(count_matrix) {
 		// counts should be 7 * 5 matrix
 		return (
-			<View style={{ width: '64%' }}>
+			<View style={{
+				flexDirection: 'row',
+				width: '83.3333%',
+			}}>
 				{
-					count_matrix.map((count_row, index) => this.makeRow(count_row))
+					count_matrix.map((count_column, index) => this.makeColumn(count_column))
 				}
 			</View>
 		);
@@ -76,7 +116,7 @@ export default class App extends React.Component {
 			<View style={styles.container}>
 				<StatusBar style="auto" />
 				<View style={styles.header}>
-					<View style={{flex:2, justifyContent: 'flex-end', flexDirection: 'row'}}>
+					<View style={{flex:2, justifyContent: 'flex-end', flexDirection: 'row', shadowColor: "#000000", shadowOpacity: 0.3, shadowOffset: { width: 2, height: 2 }}}>
 						<Icon name="ios-notifications" size={30} color="black" />
 						<Icon name="ios-settings" size={30} color="black" style={{paddingRight:20, paddingLeft:20}} onPress={() => this.props.navigation.navigate('Setting')} />
 					</View>
@@ -120,17 +160,23 @@ export default class App extends React.Component {
 					</View>
 
 					<View style={styles.slide2}>
-						{
-							this.makeTable([
-								[0, 1, 2, 3, 4],
-								[7, 1, 2, 3, 4],
-								[0, 17, 2, 5, 8],
-								[10, 1, 2, 3, 4],
-								[10, 8, 2, 3, 4],
-								[0, 8, 6, 3, 4],
-								[10, 8, 6, 3, 4]
-							])
-						}
+						<Text style={{paddingBottom: 30, fontSize:20}}>
+							잔디 쑥쑥
+						</Text>
+						<View style={{flexDirection: 'row'}}>
+							{
+								this.makeWeek()
+							}
+							{
+								this.makeTable([
+									[0, 1, 2, 3, 4, 7, 1],
+									[0, 17, 2, 5, 8, 10, 1],
+									[10, 8, 2, 3, 4, 3, 4],
+									[10, 8, 6, 3, 4, 1, 2],
+									[0, 1, 2, 3, 4, 1, 2],
+								])
+							}
+						</View>
 					</View>
 
 				</Swiper>
@@ -147,25 +193,26 @@ const styles = StyleSheet.create({
 		backgroundColor: '#fff',
 	},
 	header: {
-		//flex:1,
-		//justifyContent: 'flex-start',
 		backgroundColor: '#fff',
-		height: 60,
+		height: 65,
 		width: '100%',
-		//flexDirection: 'row',
 		paddingTop: 25,
-		paddingBottom: 3
-		
+		paddingBottom: 3,
+		shadowColor: "#000000", //그림자색
+		shadowOpacity: 0.15, //그림자 투명도
+		shadowOffset: { width: 2, height: 3 }, //그림자 위치		
 	},
 	slide1: {
-		flex:1,
+		flex: 1,
 		alignItems: 'center',
 		justifyContent: 'center',
 	},
 	slide2: {
-		flex:1,
+		flex: 1,
 		alignItems: 'center',
 		justifyContent: 'center',
+		paddingHorizontal: 64,
+		paddingBottom: 64
 	},
 	commit: {
 		flex:3,
@@ -174,7 +221,6 @@ const styles = StyleSheet.create({
 	announcement: {
 		flex:5,
 		justifyContent: 'center',
-		//fontsize: 20,
 	},
 	character: {
 		flex:8,
