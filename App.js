@@ -13,7 +13,7 @@ import GitHubLogin, { loadGitHubToken, deleteGitHubToken } from './views/GitHubL
 import Loading from './views/Loading';
 import Main from './views/Main';
 import Setting from './views/Setting';
-import Alarm from './views/Alarm';
+import Alarm,{getTargetDate, sendPushNotification} from './views/Alarm';
 
 import { getUserInfo, getUserEvents } from './util/GitHubAPI';
 
@@ -25,7 +25,7 @@ Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
     shouldPlaySound: false,
-    shouldSetBadge: false,
+    shouldetBadge: false,
   }),
 });
 
@@ -67,12 +67,14 @@ export default () => {
 
   // state 
   const [isLoaded, setIsLoaded] = useState(false);
+  const [intervalID, setIntervalID] = useState(null);
   const [gitHubToken, setGitHubToken] = useState(undefined); // 혹시 모르니 테스트해볼게
   const [name, setName] = useState(undefined);
   const [email, setEmail] = useState(undefined);
   const [avatar, setAvatar] = useState(undefined);
   const [lastEventDate, setLastEventDate] = useState(undefined);
   const [EventDateList, setEventDateList] = useState(undefined);
+  const [count, setCount] = useState(1);
   
   // state_push
   const [expoPushToken, setExpoPushToken] = useState('');
@@ -105,14 +107,14 @@ export default () => {
   const loadApp = async () => {
     console.log()
     let token = await loadGitHubToken();
-    resetGitHubToken(token);
+    resetGitHubToken(token); //props 변화할 때마다 useEffect는 실행될 것!
   };
 
   const resetGitHubToken = async (token) => {
 
     // set state
     setGitHubToken(token);
-
+    // 5초 이후에 토큰 요청하기
     if (token != null) {
       loadUserInfo(token)
       .catch(async (error) => {
@@ -130,7 +132,7 @@ export default () => {
   // 사용자 정보 저장하기
   const loadUserInfo = async (token) => {
     let userInfo = await getUserInfo(token);
-    console.log(userInfo);
+    //console.log(userInfo);
 
     // set state
     setName(userInfo.name);
@@ -158,8 +160,8 @@ export default () => {
   
       return yyyy + '-' +(mm[1] ? mm : '0'+mm[0]) + "-" + (dd[1] ? dd : '0'+dd[0]);  
     }
- 
-    console.log(yyyymmdd());
+   
+    //console.log(yyyymmdd());
 
 
     for (let activity of userActivity) {
@@ -183,9 +185,13 @@ export default () => {
       //   setLastCommitDay(activity.created_at)
       //   break; 
     }
-    console.log(myCommitList);
+    //console.log(myCommitList);
+    
     setEventDateList(myCommitList);
+    //console.log(myCommitList);
     setLastEventDate(myCommitList[0]);  // 가장 최근 커밋 날
+
+    //console.log('1번 문제'+lastEventDate)
 
     console.log('계속 찍히니?')
     //console.log(typeof userActivity)
@@ -194,11 +200,33 @@ export default () => {
   
   useEffect(() => {
 
-    if (gitHubToken === undefined) {
+    if (gitHubToken === undefined) {  
       loadApp();
     }
-    else  await loadUserInfo(gitHubToken)
+    else if (gitHubToken && !intervalID) { // 토큰은 있고 intervalID는 없을 때
+      console.log('setInterval');
+      setIntervalID(setInterval(async ()=>{
+        await loadUserInfo(gitHubToken);
 
+
+      },30000)); //30초에 한번씩 불러옴~
+
+      // setInteval 취소 함수
+      // clearInterval(intervalID);
+    }
+    if(lastEventDate !== undefined){
+      if(getTargetDate(lastEventDate,count)<=Date.now()){ // 지금 시간이 더 크면 푸시하기
+
+        console.log(getTargetDate(lastEventDate,count))
+        console.log(Date.now())
+
+        //푸시~
+        sendPushNotification(expoPushToken,count)
+        console.log('push');
+
+        setLastEventDate(undefined);
+      }
+    }
   });
 
 //TODO: 토큰 무효화
@@ -218,7 +246,7 @@ export default () => {
             {props => <Setting {...props} setGitHubToken={setGitHubToken} gitHubToken={gitHubToken} name={name} email={email} avatar={avatar} />}
             </Stack.Screen>
             <Stack.Screen name="Alarm" options={{title:'알람 설정'}} >
-						{props => <Alarm {...props} expoPushToken={expoPushToken} lastEventDate={lastEventDate}/>}
+						{props => <Alarm {...props} expoPushToken={expoPushToken} lastEventDate={lastEventDate} setCount={setCount} count={count}/>}
 
 						</Stack.Screen>
               

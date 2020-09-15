@@ -18,7 +18,7 @@ var images = [
 export default class App extends React.Component {
 
 	makeTile(commit_count) {
-		console.log("Hello")
+		//console.log("Hello")
 		const backGroundColors = [
 			[13, "#143601"],
 			[ 8, "#1a4301"],
