@@ -213,7 +213,7 @@ export default () => {
       <Stack.Navigator>
         {gitHubToken ? (    // 토큰이 있을 경우
           <>
-            <Stack.Screen name="Main" component={Main} eventDateList={EventDateList} />
+            <Stack.Screen name="Main" component={Main} options={{ headerShown: false }} eventDateList={EventDateList} />
             <Stack.Screen name="Setting">
             {props => <Setting {...props} setGitHubToken={setGitHubToken} gitHubToken={gitHubToken} name={name} email={email} avatar={avatar} />}
             </Stack.Screen>
