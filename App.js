@@ -186,14 +186,19 @@ export default () => {
     console.log(myCommitList);
     setEventDateList(myCommitList);
     setLastEventDate(myCommitList[0]);  // 가장 최근 커밋 날
+
+    console.log('계속 찍히니?')
     //console.log(typeof userActivity)
     //console.log(userActivity.length)
   }
-
+  
   useEffect(() => {
+
     if (gitHubToken === undefined) {
       loadApp();
     }
+    else  await loadUserInfo(gitHubToken)
+
   });
 
 //TODO: 토큰 무효화

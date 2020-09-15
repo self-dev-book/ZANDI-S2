@@ -53,7 +53,7 @@ async function sendPushNotification(expoPushToken, count) {
       to: expoPushToken, //이 토큰 갖는 디바이스로
       sound: 'default',
       vibrate: 'default',
-      NotificationTriggerInput: DateTriggerInput({number:1599958440}),
+      //NotificationTriggerInput: DateTriggerInput({number:1599958440}),
         //DateTriggerInput: Math.round(new Date(lastEventDate.replaceAll('-','/').replaceAll('T',' ').replaceAll('Z','')).getTime()/1000+86400*this.state.count),//unix stamp time
       //https://snack.expo.io/@aboutreact/showtoday-date-example?session_id=snack-session-TT5a8E!7q :date 가져오는 방법
       //DateTriggerInput:1599957780
