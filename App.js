@@ -22,7 +22,70 @@ import { getUserInfo, getUserEvents } from './util/GitHubAPI';
 
 
 const Stack = createStackNavigator();
+let ExpoTokenForBG = null;
 
+// TaskManager.defineTask(YOUR_TASK_NAME, () => {
+//   try {
+//     const receivedNewData =  // do your background fetch here
+//     return receivedNewData ? BackgroundFetch.Result.NewData : BackgroundFetch.Result.NoData;
+//   } catch (error) {
+//     return BackgroundFetch.Result.Failed;
+//   }
+// });
+
+let setStateFn = () => {
+  console.log("State not yet initialized");
+};
+
+async function initBackgroundFetch(taskName,
+                                   taskFn,
+                                   interval = 1) {
+// refer https://docs.expo.io/versions/latest/sdk/background-fetch/
+  let status = await BackgroundFetch.getStatusAsync();
+  switch(status){
+    case BackgroundFetch.Status.Restricted: console.log('Restricted'); break;
+    case BackgroundFetch.Status.Denied: console.log('Denied'); break;
+    case BackgroundFetch.Status.Available: console.log('Available'); break;
+    //available 뜸;; 뭐지 멀지 merge?!?
+    default: console.log(status); break;
+  }
+
+  console.log("init 시작되어따!")
+  try {
+    if (!TaskManager.isTaskDefined(taskName)) {
+      console.log(`TaskManager.defineTask()`);
+      TaskManager.defineTask(taskName, taskFn);
+    }
+    const options = {
+      minimumInterval: interval // in seconds
+      // startOnBoot // Whether to restart background fetch events when the device has finished booting. Defaults to false. (Android only)
+    };
+    
+    console.log(`BackgroundFetch.registerTaskAsync()`);
+    let result = await BackgroundFetch.registerTaskAsync(taskName, options);
+    console.log(`registerTaskAsync = `, result);
+  } catch (err) {
+    console.log("registerTaskAsync() failed:", err);
+  }
+}
+
+async function myTask() {
+  try {
+    // fetch data here...
+    const backendData = "Simulated fetch " + Math.random();
+    //await UpdateBG();
+    console.log("myTask() ", backendData);
+    sendPushNotification(ExpoTokenForBG, 1);
+    
+    setStateFn(backendData);
+    return backendData
+      ? BackgroundFetch.Result.NewData
+      : BackgroundFetch.Result.NoData;
+  } catch (err) {
+    return BackgroundFetch.Result.Failed;
+  }
+}
+initBackgroundFetch('myTaskName', myTask, 10);
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -31,6 +94,8 @@ Notifications.setNotificationHandler({
     shouldetBadge: false,
   }),
 });
+
+//registerTaskAsync() failed: [TypeError: BackgroundFetch.registerTaskAsync is not a function. (In 'BackgroundFetch.registerTaskAsync(taskName, options)', 'BackgroundFetch.registerTaskAsync' is undefined)]
 
 async function registerForPushNotificationsAsync() {
   let pushToken;
@@ -59,15 +124,13 @@ async function registerForPushNotificationsAsync() {
       lightColor: '#FF231F7C',
     });
   }
-
   return pushToken;
 }
 
-
-
-
 export default () => {
 
+  const [state, setState] = useState(null);
+  setStateFn = setState;
   // state 
   const [isLoaded, setIsLoaded] = useState(false);
   const [intervalID, setIntervalID] = useState(null);
@@ -75,6 +138,7 @@ export default () => {
   const [name, setName] = useState(undefined);
   const [email, setEmail] = useState(undefined);
   const [avatar, setAvatar] = useState(undefined);
+  const [userID, setUserID] = useState(undefined);
   const [lastEventDate, setLastEventDate] = useState(undefined);
   const [EventDateList, setEventDateList] = useState(undefined);
   const [count, setCount] = useState(1);
@@ -85,9 +149,13 @@ export default () => {
   const notificationListener = useRef();
   const responseListener = useRef();
 
-  
+
   useEffect(() => { //useEffect 하나로 합치기
-    registerForPushNotificationsAsync().then(pushToken => setExpoPushToken(pushToken));
+    console.log('useEffect push notification');
+    registerForPushNotificationsAsync().then(pushToken => {
+      ExpoTokenForBG = pushToken;
+      setExpoPushToken(pushToken)
+    });
 
     // This listener is fired whenever a notification is received while the app is foregrounded
     notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
@@ -105,10 +173,9 @@ export default () => {
     };
   }, []);
 
-
   // load app
   const loadApp = async () => {
-    console.log()
+    console.log(`loadApp()`);
     let token = await loadGitHubToken();
     resetGitHubToken(token); //props 변화할 때마다 useEffect는 실행될 것!
   };
@@ -120,6 +187,7 @@ export default () => {
     // 5초 이후에 토큰 요청하기
     if (token != null) {
       loadUserInfo(token)
+      .then(loadUserEvents)
       .catch(async (error) => {
         console.log(`Error: ${error}`);
 
@@ -131,20 +199,25 @@ export default () => {
 
     setIsLoaded(true);
   }
-
+  
   // 사용자 정보 저장하기
   const loadUserInfo = async (token) => {
     let userInfo = await getUserInfo(token);
     //console.log(userInfo);
-
+    
     // set state
     setName(userInfo.name);
     setEmail(userInfo.email);
     setAvatar(userInfo.avatar_url);
+    setUserID(userInfo.login);
 
+    return userInfo.login;
+  };
+  
+  const loadUserEvents = async (loginID) => {
     // 사용자 활동 정보 저장하기
-    let userActivity = await getUserEvents(token, userInfo.login);      
-    let myCommitList = new Array;
+    let userActivity = await getUserEvents(gitHubToken, loginID);
+    let myCommitList = [];
     
     const yyyymmdd = () => //한 달 전 년월일
     {
@@ -157,15 +230,13 @@ export default () => {
           yyyy--;
           mm=12;
       }
-      
       yyyy=yyyy.toString();
       mm=mm.toString();
-  
+
       return yyyy + '-' +(mm[1] ? mm : '0'+mm[0]) + "-" + (dd[1] ? dd : '0'+dd[0]);  
     }
    
     //console.log(yyyymmdd());
-
 
     for (let activity of userActivity) {
       //console.log(activity)  // 커밋 시간
@@ -179,7 +250,7 @@ export default () => {
       let commitsPerDay = activity?.payload?.commits || [];
       for(let commit of commitsPerDay){
         // 내 아이디만 걸리게끔
-        if(commit.author.name == userInfo.login){
+        if(commit.author.name == loginID){
           // myCommitList에 내 커밋 시간 추가
           myCommitList.push(activity.created_at);
         }
@@ -201,37 +272,42 @@ export default () => {
     //console.log(userActivity.length)
   }
   
-  useEffect(() => {
-
-    if (gitHubToken === undefined) {  
+  UpdateBG = () => {
+    console.log('UpdateBG()')
+    if (gitHubToken === undefined) {
       loadApp();
     }
-    else if (gitHubToken && !intervalID) { // 토큰은 있고 intervalID는 없을 때
+
+    else if (gitHubToken && userID && !intervalID) { // 토큰은 있고 intervalID는 없을 때
       console.log('setInterval');
       setIntervalID(setInterval(async ()=>{
-        await loadUserInfo(gitHubToken);
-
-
+        await loadUserEvents(userID);
       },30000)); //30초에 한번씩 불러옴~
 
       // setInteval 취소 함수
       // clearInterval(intervalID);
     }
+
+    console.log(`typeof lastEventDate = ${typeof lastEventDate}`)
+
     if(lastEventDate !== undefined){
       if(getTargetDate(lastEventDate,count)<=Date.now()){ // 지금 시간이 더 크면 푸시하기
-
+  
         console.log(getTargetDate(lastEventDate,count))
         console.log(Date.now())
-
+  
         //푸시~
-        sendPushNotification(expoPushToken,count)
+        // sendPushNotification(expoPushToken,count)
         console.log('push');
-
+  
         setLastEventDate(undefined);
       }
     }
-  });
+    console.log('end of UpdateBG()')
 
+  }
+  useEffect(() => UpdateBG());
+  
 //TODO: 토큰 무효화
 // 1. 토큰을 기기에서 지웠다.
  //2. 하지만 그 토큰을 다시 쓸 수는 있다.

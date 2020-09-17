@@ -68,7 +68,7 @@ export default class App extends React.Component {
 						}}>
 							<Text
 								style={{
-									fontSize: '16',
+									fontSize: 16,
 									color: '#a0a0a0'
 								}}
 							>
@@ -166,9 +166,10 @@ export default class App extends React.Component {
 						</Text>
 						<View style={{flexDirection: 'row'}}>
 							{
-								this.makeWeek()
+								//this.makeWeek()
 							}
 							{
+								/*
 								this.makeTable([
 									[0, 1, 2, 3, 4, 7, 1],
 									[0, 17, 2, 5, 8, 10, 1],
@@ -176,6 +177,7 @@ export default class App extends React.Component {
 									[10, 8, 6, 3, 4, 1, 2],
 									[0, 1, 2, 3, 4, 1, 2],
 								])
+								*/
 							}
 						</View>
 					</View>
