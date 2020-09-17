@@ -161,7 +161,6 @@ export default () => {
  
     console.log(yyyymmdd());
 
-
     for (let activity of userActivity) {
       //console.log(activity)  // 커밋 시간
       //console.log(activity.payload.commits);
