@@ -9,6 +9,9 @@ import {  Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
+import * as BackgroundFetch from 'expo-background-fetch';
+import * as TaskManager from 'expo-task-manager';
+
 import GitHubLogin, { loadGitHubToken, deleteGitHubToken } from './views/GitHubLogin';
 import Loading from './views/Loading';
 import Main from './views/Main';
