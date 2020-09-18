@@ -105,14 +105,14 @@ export default (props) => {
   const [gitHubState, setGitHubState] = useState(undefined);
   const [gitHubTokenRequested, setGitHubTokenRequested] = useState(false);
 
-  useEffect(() => {
+  useEffect(() => { //props 변화할 때마다 useEffect는 실행될 것!
     if (!gitHubState) {
       // state not exist
       getRandomState(setGitHubState);
     } else if (gitHubTokenRequested === false) {
       // able to request a token
       setGitHubTokenRequested(true);
-      setTimeout(() => {
+      setTimeout(() => {    // 5초 이후에 토큰 요청하기
         requestGitHubToken(gitHubState, setGitHubState, props.setGitHubToken, setGitHubTokenRequested);
       }, 500);
     }
