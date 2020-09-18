@@ -1,6 +1,6 @@
 import { Octokit } from "@octokit/core";
 
-import { GitHubLogin_ClientID, GitHubLoginMiddlewareURL_Token } from '../keys.json';
+import { GitHubLoginMiddlewareURL_Token } from '../keys.json';
 import Axios from "axios";
 
 // request to GitHub using Octokit
@@ -25,7 +25,7 @@ const request = async (route, token, options = {}) => {
 export const getUserInfo = async (token) => await request("GET /user", token);
 export const getUserEvents = async (token, username) => await request(`GET /users/${username}/events`, token, {
 	username: username,
-	per_page:100 // 페이지 최대값
+	per_page: 100 // 페이지 최대값
 });
 
 export const deleteAccessToken = (token) => {
