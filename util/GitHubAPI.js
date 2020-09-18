@@ -28,13 +28,9 @@ export const getUserEvents = async (token, username) => await request(`GET /user
 	per_page:100 // 페이지 최대값
 });
 
-// export const deleteAccessToken = async (token) => await request(`DELETE /applications/${GitHubLogin_ClientID}/tokens/${token}`, token, {
-// 	client_id: GitHubLogin_ClientID,
-// 	access_token: token
-// });
-
 export const deleteAccessToken = (token) => {
-	console.log(`deleteAccessToken(${token}), ${GitHubLoginMiddlewareURL_Token}/${token}`)
+	console.log(`deleteAccessToken(${token})`);
+
 	return Axios.delete(`${GitHubLoginMiddlewareURL_Token}/${token}`)
 	.then(response => {
 		console.log(response.data);
@@ -42,12 +38,6 @@ export const deleteAccessToken = (token) => {
 	})
 	.catch(err => {
 		console.log(err);
-		// delete state_token[state];
 		return null;
 	});
 };
-
-// await request(`DELETE /applications/${GitHubLogin_ClientID}/tokens/${token}`, token, {
-// 	client_id: GitHubLogin_ClientID,
-// 	access_token: token
-// });
