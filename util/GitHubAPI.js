@@ -23,10 +23,31 @@ const request = async (route, token, options = {}) => {
 }
 
 export const getUserInfo = async (token) => await request("GET /user", token);
-export const getUserEvents = async (token, username) => await request(`GET /users/${username}/events`, token, {
-	username: username,
-	per_page: 100 // 페이지 최대값
-});
+export const getUserEvents = async (token, username) => {
+
+	let requests = [];
+	for (let i = 0; i < 3; i++) {
+		requests.push(
+			request(`GET /users/${username}/events`, token, {
+				username: username,
+				per_page: 100,
+				page: i
+			})
+		);
+	}
+
+	return Promise.all(requests)
+	.then((results) => {
+		console.log(`results.length = ${results.length}`);
+		let ar = [];
+		results.map(result => {
+			if (result) {
+				ar = ar.concat(result);
+			}
+		});
+		return ar;
+	})
+};
 
 export const deleteAccessToken = (token) => {
 	console.log(`deleteAccessToken(${token})`);

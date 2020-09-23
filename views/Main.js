@@ -216,7 +216,7 @@ export default class App extends React.Component {
 						</Text>
 						<View style={{flexDirection: 'row'}}>
 							{
-								this.makeWeek()
+								//this.makeWeek()
 							}
 							{
 								this.makeTable(this.zandi())
