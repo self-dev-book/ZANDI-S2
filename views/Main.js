@@ -131,7 +131,7 @@ export default class App extends React.Component {
 	}
 
 	makeColumn(count_column, column_index) {
-		// counts should be 1 * 5 matrix
+		// counts should be 7 * 1 matrix
 		return (
 			<View
 				key={`column-${column_index}`}

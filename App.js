@@ -182,7 +182,7 @@ export default () => {
       //   setLastCommitDay(activity.created_at)
       //   break; 
     }
-    console.log(myCommitList);
+    console.log(`myCommitList`, myCommitList);
     setEventDateList(myCommitList);
     setLastEventDate(myCommitList[0]);  // 가장 최근 커밋 날
     //console.log(typeof userActivity)
@@ -201,33 +201,44 @@ export default () => {
  //3. 그래서 토큰을 무효화해야 한다.
  //4. 음 그러니까 GitHub에다가 요청해야 한다. 이 토큰 이용정지 해달라고. 약간 카드 발급 받고나서 카드만 잘라버린 꼴 
  //암튼 그래도 일단 뭔가 하기는 했다. 이제 토큰 무효화 요청하는 코드부터 짜야겠다
-  return (
-    isLoaded ?
-    <NavigationContainer>
-      <Stack.Navigator>
-        {gitHubToken ? (    // 토큰이 있을 경우
-          <>
-            <Stack.Screen name="Main" component={Main} options={{ headerShown: false }} eventDateList={EventDateList} />
-            <Stack.Screen name="Setting">
-            {props => <Setting {...props} setGitHubToken={setGitHubToken} gitHubToken={gitHubToken} name={name} email={email} avatar={avatar} />}
-            </Stack.Screen>
-            <Stack.Screen name="Alarm" options={{title:'알람 설정'}} >
-						{props => <Alarm {...props} expoPushToken={expoPushToken} lastEventDate={lastEventDate}/>}
-
+	return (
+		isLoaded
+		?
+		<NavigationContainer>
+			{
+				gitHubToken
+				?
+				( // 토큰이 있을 경우
+					EventDateList && lastEventDate
+					?
+					( // EventDateList 가 있을 경우
+						<Stack.Navigator>
+							<Stack.Screen name="Main" component={Main} options={{ headerShown: false }} eventDateList={EventDateList} />
+							<Stack.Screen name="Setting">
+								{props => <Setting {...props} setGitHubToken={setGitHubToken} gitHubToken={gitHubToken} name={name} email={email} avatar={avatar} />}
+							</Stack.Screen>
+							<Stack.Screen name="Alarm" options={{title:'알람 설정'}} >
+								{props => <Alarm {...props} expoPushToken={expoPushToken} lastEventDate={lastEventDate}/>}
+							</Stack.Screen>
+						</Stack.Navigator>
+					)
+					:
+					(
+						<>
+						</>
+					)
+				)
+				:
+				( // 토큰이 없을 경우
+					<Stack.Navigator>
+						<Stack.Screen name="GitHubLogin">
+							{props => <GitHubLogin {...props} setGitHubToken={resetGitHubToken} />}
 						</Stack.Screen>
-              
-          </>
-        ) : (          // 토큰이 없을 경우
-          <>
-            <Stack.Screen name="GitHubLogin">
-              {props => <GitHubLogin {...props} setGitHubToken={resetGitHubToken} />}
-            </Stack.Screen>
-          </>
-        )
-        }
-      </Stack.Navigator>
-    </NavigationContainer>
-    :
-    <Loading/>
-  );
+					</Stack.Navigator>
+				)
+			}
+		</NavigationContainer>
+		:
+		<Loading/>
+	);
 };
